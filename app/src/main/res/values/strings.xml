@@ -3,6 +3,7 @@
 
     <string name="enable">Enable</string>
     <string name="enable_floating_window_in_game">Enable floating window in game</string>
+    <string name="you_must_allow_me_to_draw_over_other_apps">You must allow me to draw over other apps</string>
 
     <!-- Preference keys -->
     <string name="pk_service_enabled">service_enabled</string>
