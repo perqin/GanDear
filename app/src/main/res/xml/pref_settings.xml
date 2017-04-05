@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:id="@+id/service_enabled_preference"
+        android:key="@string/pk_service_enabled"
+        android:title="@string/enable"
+        android:summary="@string/enable_floating_window_in_game"
+        android:persistent="false"/>
+
+</PreferenceScreen>
