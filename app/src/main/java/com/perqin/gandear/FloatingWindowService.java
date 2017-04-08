@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class FloatingWindowService extends Service implements GoalRecyclerAdapter.OnGoalClickListener {
+public class FloatingWindowService extends Service implements GoalRecyclerAdapter.OnGoalClickListener, ShishensRecyclerAdapter.OnItemClickListener {
     private static final String TAG = "FloatingWindowService";
     private static final int STATE_CLOSED = 0;
     private static final int STATE_EXPANDED_INITIAL = 1;
@@ -47,7 +47,7 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
 
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mGoalRecyclerAdapter = new GoalRecyclerAdapter(new ArrayList<>(), this);
-        mShishensRecyclerAdapter = new ShishensRecyclerAdapter(AppRepository.getInstance(this).getShishens());
+        mShishensRecyclerAdapter = new ShishensRecyclerAdapter(AppRepository.getInstance(this).getShishens(), this);
         mToggleOpened = false;
         addFloatingWindowView();
     }
@@ -177,6 +177,16 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
             lp.y = 100;
         }
         mWindowManager.updateViewLayout(mFloatingWindowView, lp);
+    }
+
+    @Override
+    public void onShishenItemClick(Shishen shishen) {
+        boolean added = mGoalRecyclerAdapter.addShishen(shishen);
+        if (!added) {
+            // TODO: Show tips that the shishen is already added
+        } else {
+            setState(STATE_EXPANDED_INITIAL);
+        }
     }
 
     private class OnToggleButtonClickListener implements View.OnClickListener {

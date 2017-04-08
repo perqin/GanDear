@@ -24,9 +24,15 @@ public class GoalRecyclerAdapter extends RecyclerView.Adapter<GoalRecyclerAdapte
         this.mListener = listener;
     }
 
-    public void addShishen(Shishen shishen) {
+    public boolean addShishen(Shishen shishen) {
+        for (Shishen s : mShishensList) {
+            if (s.getName().equals(shishen.getName())) {
+                return false;
+            }
+        }
         mShishensList.add(shishen);
         notifyItemInserted(mShishensList.size() - 1);
+        return true;
     }
 
     @Override

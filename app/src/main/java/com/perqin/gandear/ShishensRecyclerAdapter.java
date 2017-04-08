@@ -16,10 +16,12 @@ import java.util.ArrayList;
 
 public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecyclerAdapter.ViewHolder> {
     private ArrayList<Shishen> mDataSet = new ArrayList<>();
+    private OnItemClickListener mListener;
 
-    public ShishensRecyclerAdapter(ArrayList<Shishen> shishens) {
+    public ShishensRecyclerAdapter(ArrayList<Shishen> shishens, OnItemClickListener listener) {
         mDataSet.clear();
         mDataSet.addAll(shishens);
+        mListener = listener;
     }
 
     @Override
@@ -32,6 +34,11 @@ public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecycl
         Shishen shishen = mDataSet.get(position);
         holder.nameText.setText(shishen.getName());
         holder.cluesText.setText(shishen.getClues());
+        holder.itemView.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onShishenItemClick(shishen);
+            }
+        });
     }
 
     @Override
@@ -50,5 +57,9 @@ public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecycl
             nameText = (TextView) itemView.findViewById(R.id.name_text);
             cluesText = (TextView) itemView.findViewById(R.id.clues_text);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onShishenItemClick(Shishen shishen);
     }
 }
