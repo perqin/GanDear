@@ -27,6 +27,7 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
     private int mState;
     private WindowManager mWindowManager;
     private GoalRecyclerAdapter mGoalRecyclerAdapter;
+    private GoalDetailRecyclerAdapter mGoalDetailRecyclerAdapter;
     private ShishensRecyclerAdapter mShishensRecyclerAdapter;
     private boolean mToggleOpened;
 
@@ -47,6 +48,7 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
 
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mGoalRecyclerAdapter = new GoalRecyclerAdapter(new ArrayList<>(), this);
+        mGoalDetailRecyclerAdapter = new GoalDetailRecyclerAdapter();
         mShishensRecyclerAdapter = new ShishensRecyclerAdapter(AppRepository.getInstance(this).getShishens(), this);
         mToggleOpened = false;
         addFloatingWindowView();
@@ -65,7 +67,8 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
 
     @Override
     public void onGoalClick(Shishen shishen) {
-        // TODO: Implement onGoalClick
+        setState(STATE_EXPANDED_SHISHEN_PRESENCE);
+        mGoalDetailRecyclerAdapter.reloadPresence(shishen.getId(), AppRepository.getInstance(this).getShishenPresences(shishen.getId()));
     }
 
     @Override
@@ -120,6 +123,8 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
         mGoalsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mGoalsRecyclerView.setAdapter(mGoalRecyclerAdapter);
         mGoalDetailsRecyclerView = (RecyclerView) mFloatingWindowView.findViewById(R.id.goal_details_recycler_view);
+        mGoalDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mGoalDetailsRecyclerView.setAdapter(mGoalDetailRecyclerAdapter);
         mShishensRecyclerView = (RecyclerView) mFloatingWindowView.findViewById(R.id.shishens_recycler_view);
         mShishensRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mShishensRecyclerView.setAdapter(mShishensRecyclerAdapter);

@@ -6,6 +6,7 @@ package com.perqin.gandear;
  */
 
 public class Shishen {
+    private String id;
     private String name;
     private String imageSrcUrl;
     private String clues;
@@ -32,5 +33,13 @@ public class Shishen {
 
     public void setClues(String clues) {
         this.clues = clues;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

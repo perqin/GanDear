@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 public class Dungeon {
     private String name;
+    private int sushi;
     private int exp;
     private int money;
     private ArrayList<Round> rounds;
@@ -44,6 +45,14 @@ public class Dungeon {
 
     public void setRounds(ArrayList<Round> rounds) {
         this.rounds = rounds;
+    }
+
+    public int getSushi() {
+        return sushi;
+    }
+
+    public void setSushi(int sushi) {
+        this.sushi = sushi;
     }
 
     public static class Round {
