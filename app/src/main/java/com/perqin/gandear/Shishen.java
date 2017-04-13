@@ -1,5 +1,7 @@
 package com.perqin.gandear;
 
+import java.util.List;
+
 /**
  * Author   : perqin
  * Date     : 17-4-5
@@ -10,6 +12,7 @@ public class Shishen {
     private String name;
     private String imageSrcUrl;
     private String clues;
+    private List<String> queries;
 
     public String getName() {
         return name;
@@ -41,5 +44,13 @@ public class Shishen {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public List<String> getQueries() {
+        return queries;
+    }
+
+    public void setQueries(List<String> queries) {
+        this.queries = queries;
     }
 }

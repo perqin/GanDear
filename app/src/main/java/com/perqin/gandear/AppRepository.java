@@ -94,6 +94,19 @@ public class AppRepository {
         }
     }
 
+    public ArrayList<Shishen> queryShishens(String query) {
+        ArrayList<Shishen> shishens = new ArrayList<>();
+        for (Shishen shishen : mShishens) {
+            for (String q : shishen.getQueries()) {
+                if (q.startsWith(query)) {
+                    shishens.add(shishen);
+                    break;
+                }
+            }
+        }
+        return shishens;
+    }
+
     private String readStringFromAssets(Context context, String filename) {
         String json = "";
         try {

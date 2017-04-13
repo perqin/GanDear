@@ -17,7 +17,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class FloatingWindowService extends Service implements GoalRecyclerAdapter.OnGoalClickListener, ShishensRecyclerAdapter.OnItemClickListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class FloatingWindowService extends Service
+        implements GoalRecyclerAdapter.OnGoalClickListener, ShishensRecyclerAdapter.OnItemClickListener, View.OnClickListener, QueryHelper.QueryChangeListener {
     private static final String TAG = "FloatingWindowService";
     private static final int STATE_CLOSED = 0;
     private static final int STATE_EXPANDED_INITIAL = 1;
@@ -30,14 +35,17 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
     private GoalDetailRecyclerAdapter mGoalDetailRecyclerAdapter;
     private ShishensRecyclerAdapter mShishensRecyclerAdapter;
     private boolean mToggleOpened;
+    private QueryHelper mQueryHelper;
 
     private View mFloatingWindowView;
     private ImageButton mToggleButton;
     private RecyclerView mGoalsRecyclerView;
     private RecyclerView mGoalDetailsRecyclerView;
     private RecyclerView mShishensRecyclerView;
-    private TextView mInputText;
     private TableLayout mTableLayout;
+    // Widgets for query
+    @BindView(R.id.input_text)
+    TextView mInputText;
 
     public FloatingWindowService() {
     }
@@ -51,6 +59,8 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
         mGoalDetailRecyclerAdapter = new GoalDetailRecyclerAdapter();
         mShishensRecyclerAdapter = new ShishensRecyclerAdapter(AppRepository.getInstance(this).getShishens(), this);
         mToggleOpened = false;
+        mQueryHelper = new QueryHelper();
+        mQueryHelper.setListener(this);
         addFloatingWindowView();
     }
 
@@ -128,8 +138,8 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
         mShishensRecyclerView = (RecyclerView) mFloatingWindowView.findViewById(R.id.shishens_recycler_view);
         mShishensRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mShishensRecyclerView.setAdapter(mShishensRecyclerAdapter);
-        mInputText = (TextView) mFloatingWindowView.findViewById(R.id.input_text);
         mTableLayout = (TableLayout) mFloatingWindowView.findViewById(R.id.table_layout);
+        ButterKnife.bind(this, mFloatingWindowView);
 
         setState(STATE_CLOSED);
 
@@ -191,6 +201,55 @@ public class FloatingWindowService extends Service implements GoalRecyclerAdapte
             // TODO: Show tips that the shishen is already added
         } else {
             setState(STATE_EXPANDED_INITIAL);
+        }
+    }
+
+    @OnClick({ R.id.delete_button, R.id.abc_button, R.id.def_button, R.id.ghi_button, R.id.jkl_button, R.id.mno_button, R.id.pqrs_button, R.id.tuv_button, R.id.wxyz_button })
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.delete_button:
+                String q = mQueryHelper.getQuery();
+                if (!q.isEmpty()) {
+                    mQueryHelper.setQuery(q.substring(0, q.length() - 1));
+                }
+                break;
+            case R.id.abc_button:
+                mQueryHelper.appendToQuery("2");
+                break;
+            case R.id.def_button:
+                mQueryHelper.appendToQuery("3");
+                break;
+            case R.id.ghi_button:
+                mQueryHelper.appendToQuery("4");
+                break;
+            case R.id.jkl_button:
+                mQueryHelper.appendToQuery("5");
+                break;
+            case R.id.mno_button:
+                mQueryHelper.appendToQuery("6");
+                break;
+            case R.id.pqrs_button:
+                mQueryHelper.appendToQuery("7");
+                break;
+            case R.id.tuv_button:
+                mQueryHelper.appendToQuery("8");
+                break;
+            case R.id.wxyz_button:
+                mQueryHelper.appendToQuery("9");
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onQueryChange(String oldQuery, String newQuery) {
+        mInputText.setText(newQuery);
+        if (newQuery.isEmpty()) {
+            mShishensRecyclerAdapter.refreshShishens(AppRepository.getInstance(this).getShishens());
+        } else {
+            mShishensRecyclerAdapter.refreshShishens(AppRepository.getInstance(this).queryShishens(newQuery));
         }
     }
 

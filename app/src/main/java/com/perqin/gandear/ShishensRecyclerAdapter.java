@@ -24,6 +24,12 @@ public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecycl
         mListener = listener;
     }
 
+    public void refreshShishens(ArrayList<Shishen> shishens) {
+        mDataSet.clear();
+        mDataSet.addAll(shishens);
+        notifyDataSetChanged();
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_shishen_selection, parent, false));
