@@ -1,6 +1,8 @@
 package com.perqin.gandear;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -9,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Author   : perqin
@@ -16,9 +20,12 @@ import java.util.HashMap;
  */
 
 public class AppRepository {
+    private static final String PK_GOAL_SHISHENS = "GOAL_SHISHENS";
     private static AppRepository sInstance;
 
+    private SharedPreferences mSharedPreferences;
     private ArrayList<Shishen> mShishens;
+    private HashMap<String, Shishen> mShishensMap;
     private ArrayList<Dungeon> mDungeons;
     private HashMap<String, ArrayList<Dungeon>> mShishenPresences;
 
@@ -29,10 +36,36 @@ public class AppRepository {
         return sInstance;
     }
 
+    public void addGoalShishen(Shishen shishen) {
+        Set<String> shishenSet = mSharedPreferences.getStringSet(PK_GOAL_SHISHENS, new HashSet<>());
+        shishenSet.add(shishen.getId());
+        mSharedPreferences.edit().putStringSet(PK_GOAL_SHISHENS, shishenSet).apply();
+    }
+
+    public void removeGoalShishen(Shishen shishen) {
+        Set<String> shishenSet = mSharedPreferences.getStringSet(PK_GOAL_SHISHENS, new HashSet<>());
+        shishenSet.remove(shishen.getId());
+        mSharedPreferences.edit().putStringSet(PK_GOAL_SHISHENS, shishenSet).apply();
+    }
+
+    public ArrayList<Shishen> getGoalShishens() {
+        Set<String> shishenSet = mSharedPreferences.getStringSet(PK_GOAL_SHISHENS, new HashSet<>());
+        ArrayList<Shishen> shishens = new ArrayList<>();
+        for (String id : shishenSet) {
+            shishens.add(mShishensMap.get(id));
+        }
+        return shishens;
+    }
+
     private AppRepository(Context context) {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         Gson gson = new Gson();
         String shishensJson = readStringFromAssets(context, "shishens.json");
         mShishens = gson.fromJson(shishensJson, new TypeToken<ArrayList<Shishen>>(){}.getType());
+        mShishensMap = new HashMap<>();
+        for (Shishen shishen : mShishens) {
+            mShishensMap.put(shishen.getId(), shishen);
+        }
         String dungeonsJson = readStringFromAssets(context, "dungeons.json");
         mDungeons = gson.fromJson(dungeonsJson, new TypeToken<ArrayList<Dungeon>>(){}.getType());
         mShishenPresences = new HashMap<>();

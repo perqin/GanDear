@@ -4,6 +4,8 @@
     <string name="enable">Enable</string>
     <string name="enable_floating_window_in_game">Enable floating window in game</string>
     <string name="you_must_allow_me_to_draw_over_other_apps">You must allow me to draw over other apps</string>
+    <string name="you_have_removed_shishen_PH">You have removed shishen %1$s</string>
+    <string name="this_shishen_is_already_added">This shishen is already added</string>
 
     <!-- Preference keys -->
     <string name="pk_service_enabled">service_enabled</string>

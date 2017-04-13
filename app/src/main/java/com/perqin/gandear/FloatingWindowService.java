@@ -15,8 +15,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
-
-import java.util.ArrayList;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,7 +57,7 @@ public class FloatingWindowService extends Service
         super.onCreate();
 
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        mGoalRecyclerAdapter = new GoalRecyclerAdapter(new ArrayList<>(), this);
+        mGoalRecyclerAdapter = new GoalRecyclerAdapter(AppRepository.getInstance(this).getGoalShishens(), this);
         mGoalDetailRecyclerAdapter = new GoalDetailRecyclerAdapter();
         mShishensRecyclerAdapter = new ShishensRecyclerAdapter(AppRepository.getInstance(this).getShishens(), this);
         mToggleOpened = false;
@@ -86,7 +85,10 @@ public class FloatingWindowService extends Service
 
     @Override
     public void onGoalLongClick(Shishen shishen) {
-        // TODO: Implement onGoalLongClick
+        AppRepository.getInstance(this).removeGoalShishen(shishen);
+        setState(STATE_EXPANDED_INITIAL);
+        mGoalRecyclerAdapter.removeShishen(shishen);
+        Toast.makeText(this, getString(R.string.you_have_removed_shishen_PH, shishen.getName()), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -211,8 +213,9 @@ public class FloatingWindowService extends Service
     public void onShishenItemClick(Shishen shishen) {
         boolean added = mGoalRecyclerAdapter.addShishen(shishen);
         if (!added) {
-            // TODO: Show tips that the shishen is already added
+            Toast.makeText(this, R.string.this_shishen_is_already_added, Toast.LENGTH_SHORT).show();
         } else {
+            AppRepository.getInstance(this).addGoalShishen(shishen);
             setState(STATE_EXPANDED_INITIAL);
         }
     }

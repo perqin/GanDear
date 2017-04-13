@@ -65,6 +65,19 @@ public class GoalRecyclerAdapter extends RecyclerView.Adapter<GoalRecyclerAdapte
         return mShishensList.size() + 1;
     }
 
+    public void removeShishen(Shishen shishen) {
+        int i;
+        for (i = mShishensList.size() - 1; i >= 0; --i) {
+            if (mShishensList.get(i).getId().equals(shishen.getId())) {
+                mShishensList.remove(i);
+                break;
+            }
+        }
+        if (i >= 0) {
+            notifyItemRemoved(i);
+        }
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageButton imageButton;
 
