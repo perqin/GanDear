@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,6 +47,8 @@ public class FloatingWindowService extends Service
     // Widgets for query
     @BindView(R.id.input_text)
     TextView mInputText;
+    @BindView(R.id.window_root_layout)
+    ConstraintLayout mRootLayout;
 
     public FloatingWindowService() {
     }
@@ -88,7 +91,11 @@ public class FloatingWindowService extends Service
 
     @Override
     public void onAdderClick() {
-        setState(STATE_EXPANDED_SELECTING_SHISHEN);
+        if (mState == STATE_EXPANDED_SELECTING_SHISHEN) {
+            setState(STATE_EXPANDED_INITIAL);
+        } else {
+            setState(STATE_EXPANDED_SELECTING_SHISHEN);
+        }
     }
 
     private void setState(int state) {
@@ -166,8 +173,9 @@ public class FloatingWindowService extends Service
     private void toggleClosedAndExpanded(boolean expand) {
         mToggleOpened = expand;
         final WindowManager.LayoutParams lp;
+        final int padding;
         if (mToggleOpened) {
-            setState(STATE_EXPANDED_INITIAL);
+            padding = (int) (16 * getResources().getDisplayMetrics().density + 0.5f);
             lp = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.MATCH_PARENT,
@@ -178,8 +186,10 @@ public class FloatingWindowService extends Service
             lp.gravity = Gravity.TOP | Gravity.LEFT;
             lp.x = 0;
             lp.y = 0;
+            setState(STATE_EXPANDED_INITIAL);
+            mToggleButton.setImageResource(R.drawable.ic_close);
         } else {
-            setState(STATE_CLOSED);
+            padding = 0;
             lp = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
@@ -190,7 +200,10 @@ public class FloatingWindowService extends Service
             lp.gravity = Gravity.TOP | Gravity.LEFT;
             lp.x = 100;
             lp.y = 100;
+            setState(STATE_CLOSED);
+            mToggleButton.setImageResource(R.drawable.ic_expand);
         }
+        mRootLayout.setPadding(padding, padding, padding, padding);
         mWindowManager.updateViewLayout(mFloatingWindowView, lp);
     }
 
