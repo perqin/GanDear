@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Gan, dear!</string>
+    <string name="enable">启用</string>
+    <string name="enable_floating_window_in_game">在游戏中启用悬浮窗口</string>
+    <string name="you_must_allow_me_to_draw_over_other_apps">你必须允许我在其他应用上层绘制</string>
+    <string name="you_have_removed_shishen_PH">你删掉了式神 %1$s</string>
+    <string name="this_shishen_is_already_added">这个式神已经被添加过了</string>
+    <string name="sushi_PH">体力：%1$s</string>
+    <string name="count_PH">个数：%1$s</string>
+    <string name="money_PH">金币：%1$s</string>
+    <string name="exp_PH">经验：%1$s</string>
+</resources>

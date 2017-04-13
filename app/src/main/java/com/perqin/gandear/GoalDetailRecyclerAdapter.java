@@ -1,5 +1,6 @@
 package com.perqin.gandear;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,18 +25,19 @@ public class GoalDetailRecyclerAdapter extends RecyclerView.Adapter<GoalDetailRe
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Context context = holder.itemView.getContext();
         Dungeon dungeon = mDataSet.get(position);
         holder.nameText.setText(dungeon.getName());
-        holder.sushiText.setText(String.valueOf(dungeon.getSushi()));
-        holder.moneyText.setText(String.valueOf(dungeon.getMoney()));
-        holder.expText.setText(String.valueOf(dungeon.getExp()));
+        holder.sushiText.setText(context.getString(R.string.sushi_PH, String.valueOf(dungeon.getSushi())));
+        holder.moneyText.setText(context.getString(R.string.money_PH, String.valueOf(dungeon.getMoney())));
+        holder.expText.setText(context.getString(R.string.exp_PH, String.valueOf(dungeon.getExp())));
         int count = 0;
         for (Dungeon.Round round : dungeon.getRounds()) {
             if (round.getEnemies().containsKey(mShishenId)) {
                 count += round.getEnemies().get(mShishenId);
             }
         }
-        holder.countText.setText(String.valueOf(count));
+        holder.countText.setText(context.getString(R.string.count_PH, String.valueOf(count)));
     }
 
     @Override
