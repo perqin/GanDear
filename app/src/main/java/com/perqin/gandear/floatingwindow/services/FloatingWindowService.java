@@ -1,7 +1,6 @@
 package com.perqin.gandear.floatingwindow.services;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
@@ -18,13 +17,12 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.perqin.gandear.R;
 import com.perqin.gandear.data.AppRepository;
+import com.perqin.gandear.data.models.Shishen;
 import com.perqin.gandear.floatingwindow.ui.GoalDetailRecyclerAdapter;
 import com.perqin.gandear.floatingwindow.ui.GoalRecyclerAdapter;
 import com.perqin.gandear.floatingwindow.ui.QueryHelper;
-import com.perqin.gandear.R;
-import com.perqin.gandear.common.ServiceUtils;
-import com.perqin.gandear.data.models.Shishen;
 import com.perqin.gandear.floatingwindow.ui.ShishensRecyclerAdapter;
 
 import butterknife.BindView;
@@ -58,20 +56,6 @@ public class FloatingWindowService extends Service
     TextView mInputText;
     @BindView(R.id.window_root_layout)
     ConstraintLayout mRootLayout;
-
-    public static void startService(Context context) {
-        if (!ServiceUtils.isServiceRunning(context, FloatingWindowService.class)) {
-            Intent intent = new Intent(context, FloatingWindowService.class);
-            context.startService(intent);
-        }
-    }
-
-    public static void stopService(Context context) {
-        if (ServiceUtils.isServiceRunning(context, FloatingWindowService.class)) {
-            Intent intent = new Intent(context, FloatingWindowService.class);
-            context.stopService(intent);
-        }
-    }
 
     public FloatingWindowService() {
     }
@@ -240,6 +224,7 @@ public class FloatingWindowService extends Service
             Toast.makeText(this, R.string.this_shishen_is_already_added, Toast.LENGTH_SHORT).show();
         } else {
             AppRepository.getInstance(this).addGoalShishen(shishen);
+            mQueryHelper.clearQuery();
             setState(STATE_EXPANDED_INITIAL);
         }
     }

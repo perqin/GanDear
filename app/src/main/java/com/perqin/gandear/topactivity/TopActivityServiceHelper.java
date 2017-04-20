@@ -14,6 +14,8 @@ import com.perqin.gandear.common.ServiceUtils;
  */
 
 public class TopActivityServiceHelper {
+    static final String PACKAGE_NAME_ONMYOJI = "com.netease.onmyoji";
+
     private static final String PK_IS_ACCESSIBILITY_SERVICE_RUNNING = "IS_ACCESSIBILITY_SERVICE_RUNNING";
 
     public static boolean canStartService(Context context) {
@@ -32,10 +34,6 @@ public class TopActivityServiceHelper {
         } else {
             return ServiceUtils.isServiceRunning(context, TopActivityWatchingService.class);
         }
-    }
-
-    public static void forceStartService(Context context) {
-        getSp(context).edit().putBoolean(PK_IS_ACCESSIBILITY_SERVICE_RUNNING, true).apply();
     }
 
     public static void startService(Context context) {
