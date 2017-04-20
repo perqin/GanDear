@@ -1,6 +1,7 @@
 package com.perqin.gandear;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
@@ -48,6 +49,20 @@ public class FloatingWindowService extends Service
     TextView mInputText;
     @BindView(R.id.window_root_layout)
     ConstraintLayout mRootLayout;
+
+    public static void startService(Context context) {
+        if (!ServiceUtils.isServiceRunning(context, FloatingWindowService.class)) {
+            Intent intent = new Intent(context, FloatingWindowService.class);
+            context.startService(intent);
+        }
+    }
+
+    public static void stopService(Context context) {
+        if (ServiceUtils.isServiceRunning(context, FloatingWindowService.class)) {
+            Intent intent = new Intent(context, FloatingWindowService.class);
+            context.stopService(intent);
+        }
+    }
 
     public FloatingWindowService() {
     }
