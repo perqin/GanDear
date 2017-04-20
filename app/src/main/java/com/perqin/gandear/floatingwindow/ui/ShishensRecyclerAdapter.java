@@ -1,4 +1,4 @@
-package com.perqin.gandear;
+package com.perqin.gandear.floatingwindow.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.perqin.gandear.R;
+import com.perqin.gandear.data.models.Shishen;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.perqin.gandear;
+package com.perqin.gandear.common;
 
 import android.app.ActivityManager;
 import android.content.Context;

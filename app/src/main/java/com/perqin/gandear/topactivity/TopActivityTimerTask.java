@@ -1,4 +1,4 @@
-package com.perqin.gandear;
+package com.perqin.gandear.topactivity;
 
 import android.app.ActivityManager;
 import android.app.usage.UsageStats;
@@ -17,7 +17,7 @@ import java.util.TimerTask;
  * Date     : 17-4-17
  */
 
-public class CurrentActivityTimerTask extends TimerTask {
+public class TopActivityTimerTask extends TimerTask {
     private static Comparator<UsageStats> sRecentComp = new Comparator<UsageStats>() {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -31,7 +31,7 @@ public class CurrentActivityTimerTask extends TimerTask {
     private String mTargetPackage;
     private String mCurrentPackage;
 
-    public CurrentActivityTimerTask(Context context, OnTargetPackageListener listener, String targetPackage) {
+    public TopActivityTimerTask(Context context, OnTargetPackageListener listener, String targetPackage) {
         mContext = context.getApplicationContext();
         mListener = listener;
         mTargetPackage = targetPackage;

@@ -1,4 +1,4 @@
-package com.perqin.gandear;
+package com.perqin.gandear.data.models;
 
 import java.util.List;
 

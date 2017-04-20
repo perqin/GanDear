@@ -1,4 +1,4 @@
-package com.perqin.gandear;
+package com.perqin.gandear.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.perqin.gandear.data.models.Dungeon;
+import com.perqin.gandear.data.models.Shishen;
 
 import java.io.IOException;
 import java.io.InputStream;

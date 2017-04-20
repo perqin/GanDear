@@ -1,4 +1,4 @@
-package com.perqin.gandear;
+package com.perqin.gandear.topactivity;
 
 import android.accessibilityservice.AccessibilityService;
 import android.view.accessibility.AccessibilityEvent;

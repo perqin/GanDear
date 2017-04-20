@@ -1,12 +1,14 @@
-package com.perqin.gandear;
+package com.perqin.gandear.topactivity;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import com.perqin.gandear.floatingwindow.services.FloatingWindowService;
+
 import java.util.Timer;
 
-public class TopActivityWatchingService extends Service implements CurrentActivityTimerTask.OnTargetPackageListener {
+public class TopActivityWatchingService extends Service implements TopActivityTimerTask.OnTargetPackageListener {
     private static final String PACKAGE_NAME_ONMYOJI = "com.netease.onmyoji";
     private Timer mCurrentActivityTimer;
 
@@ -18,7 +20,7 @@ public class TopActivityWatchingService extends Service implements CurrentActivi
         super.onCreate();
 
         mCurrentActivityTimer = new Timer();
-        mCurrentActivityTimer.scheduleAtFixedRate(new CurrentActivityTimerTask(this, this, PACKAGE_NAME_ONMYOJI), 0, 500);
+        mCurrentActivityTimer.scheduleAtFixedRate(new TopActivityTimerTask(this, this, PACKAGE_NAME_ONMYOJI), 0, 500);
     }
 
     @Override

@@ -20,15 +20,15 @@
         </activity>
 
         <service
-            android:name=".FloatingWindowService"
+            android:name=".floatingwindow.services.FloatingWindowService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".TopActivityWatchingService"
+            android:name=".topactivity.TopActivityWatchingService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".TopActivityAccessibilityService"
+            android:name=".topactivity.TopActivityAccessibilityService"
             android:enabled="@bool/use_accessibility_service"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

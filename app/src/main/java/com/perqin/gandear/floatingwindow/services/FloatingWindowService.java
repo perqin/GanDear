@@ -1,4 +1,4 @@
-package com.perqin.gandear;
+package com.perqin.gandear.floatingwindow.services;
 
 import android.app.Service;
 import android.content.Context;
@@ -17,6 +17,15 @@ import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.perqin.gandear.data.AppRepository;
+import com.perqin.gandear.floatingwindow.ui.GoalDetailRecyclerAdapter;
+import com.perqin.gandear.floatingwindow.ui.GoalRecyclerAdapter;
+import com.perqin.gandear.floatingwindow.ui.QueryHelper;
+import com.perqin.gandear.R;
+import com.perqin.gandear.common.ServiceUtils;
+import com.perqin.gandear.data.models.Shishen;
+import com.perqin.gandear.floatingwindow.ui.ShishensRecyclerAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
