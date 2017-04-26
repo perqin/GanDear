@@ -83,6 +83,7 @@ public class FloatingWindowService extends Service
         mQueryHelper.setListener(this);
         mNewScreenshotHelper = new NewScreenshotHelper(this, new Handler(Looper.getMainLooper()), this);
         addFloatingWindowView();
+        AppRepository.getInstance(this).updateDataJsonFile();
     }
 
     @Override

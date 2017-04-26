@@ -3,18 +3,24 @@ package com.perqin.gandear.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.perqin.gandear.data.models.Data;
 import com.perqin.gandear.data.models.Dungeon;
 import com.perqin.gandear.data.models.Shishen;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Author   : perqin
@@ -22,7 +28,9 @@ import java.util.Set;
  */
 
 public class AppRepository {
+    private static final String TAG = "AppRepository";
     private static final String PK_GOAL_SHISHENS = "GOAL_SHISHENS";
+    private static final String PK_DATA_JSON_VERSION = "DATA_JSON_VERSION";
     private static AppRepository sInstance;
 
     private SharedPreferences mSharedPreferences;
@@ -30,12 +38,38 @@ public class AppRepository {
     private HashMap<String, Shishen> mShishensMap;
     private ArrayList<Dungeon> mDungeons;
     private HashMap<String, ArrayList<Dungeon>> mShishenPresences;
+    private final File mDataJsonFile;
+    private final ResourceService mResourceService;
 
     public static AppRepository getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new AppRepository(context);
         }
         return sInstance;
+    }
+
+    public void updateDataJsonFile() {
+        mResourceService.getDataJsonFile().enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Data data = new Gson().fromJson(response.body(), Data.class);
+                    if (mSharedPreferences.getLong(PK_DATA_JSON_VERSION, 0) < data.version) {
+                        // Update json file
+                        updateLocalDataFile(response.body(), data.version);
+                        reloadMemoryCache(data);
+                    }
+                    Log.d(TAG, "onResponse: Get latest version: " + data.version);
+                } else {
+                    Log.w(TAG, "onResponse: Failed to get data json file");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable throwable) {
+                Log.e(TAG, "onFailure: ", throwable);
+            }
+        });
     }
 
     public void addGoalShishen(Shishen shishen) {
@@ -59,17 +93,59 @@ public class AppRepository {
         return shishens;
     }
 
+    public ArrayList<Shishen> getShishens() {
+        return mShishens;
+    }
+
+    public ArrayList<Dungeon> getShishenPresences(String id) {
+        if (mShishenPresences.containsKey(id)) {
+            return mShishenPresences.get(id);
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public ArrayList<Shishen> queryShishens(String query) {
+        ArrayList<Shishen> shishens = new ArrayList<>();
+        for (Shishen shishen : mShishens) {
+            for (String q : shishen.getQueries()) {
+                if (q.startsWith(query)) {
+                    shishens.add(shishen);
+                    break;
+                }
+            }
+        }
+        return shishens;
+    }
+
     private AppRepository(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        Gson gson = new Gson();
-        String shishensJson = readStringFromAssets(context, "shishens.json");
-        mShishens = gson.fromJson(shishensJson, new TypeToken<ArrayList<Shishen>>(){}.getType());
+        mDataJsonFile = new File(context.getFilesDir(), "data.json");
+        mResourceService = new Retrofit.Builder()
+                .baseUrl(ResourceService.BASE_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build().create(ResourceService.class);
+        // Update local data with built-in asset
+        String builtInDataJson = FileIoHelper.readStringFromAssets(context,"data.json");
+        Data builtInData = new Gson().fromJson(builtInDataJson, Data.class);
+        if (mSharedPreferences.getLong(PK_DATA_JSON_VERSION, 0) < builtInData.version) {
+            updateLocalDataFile(builtInDataJson, builtInData.version);
+        }
+        reloadMemoryCache(builtInData);
+    }
+
+    private void updateLocalDataFile(String data, long newVersion) {
+        FileIoHelper.saveToFile(data, mDataJsonFile);
+        mSharedPreferences.edit().putLong(PK_DATA_JSON_VERSION, newVersion).apply();
+    }
+
+    private void reloadMemoryCache(Data data) {
+        mShishens = data.shishens;
         mShishensMap = new HashMap<>();
         for (Shishen shishen : mShishens) {
             mShishensMap.put(shishen.getId(), shishen);
         }
-        String dungeonsJson = readStringFromAssets(context, "dungeons.json");
-        mDungeons = gson.fromJson(dungeonsJson, new TypeToken<ArrayList<Dungeon>>(){}.getType());
+        mDungeons = data.dungeons;
         mShishenPresences = new HashMap<>();
         for (Shishen shishen : mShishens) {
             ArrayList<Dungeon> dungeons = new ArrayList<>();
@@ -115,47 +191,5 @@ public class AppRepository {
                 }
             }
         }
-    }
-
-    public ArrayList<Shishen> getShishens() {
-        return mShishens;
-    }
-
-    public ArrayList<Dungeon> getShishenPresences(String id) {
-        if (mShishenPresences.containsKey(id)) {
-            return mShishenPresences.get(id);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    public ArrayList<Shishen> queryShishens(String query) {
-        ArrayList<Shishen> shishens = new ArrayList<>();
-        for (Shishen shishen : mShishens) {
-            for (String q : shishen.getQueries()) {
-                if (q.startsWith(query)) {
-                    shishens.add(shishen);
-                    break;
-                }
-            }
-        }
-        return shishens;
-    }
-
-    private String readStringFromAssets(Context context, String filename) {
-        String json = "";
-        try {
-            InputStream inputStream = context.getAssets().open(filename);
-            int size = inputStream.available();
-            byte[] buffer = new byte[size];
-            int readCount = inputStream.read(buffer);
-            inputStream.close();
-            if (readCount != -1) {
-                json = new String(buffer, "UTF-8");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return json;
     }
 }
