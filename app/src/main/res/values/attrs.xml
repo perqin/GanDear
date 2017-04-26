@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LabelCircleImageView">
+        <attr name="label" format="reference|string"/>
+        <attr name="labelTextSize" format="dimension"/>
+    </declare-styleable>
+</resources>

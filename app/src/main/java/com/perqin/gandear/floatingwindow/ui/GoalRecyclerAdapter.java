@@ -5,12 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.perqin.gandear.R;
 import com.perqin.gandear.data.models.Shishen;
 
@@ -53,18 +49,14 @@ public class GoalRecyclerAdapter extends RecyclerView.Adapter<GoalRecyclerAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (position == mShishensList.size()) {
             holder.imageButton.setImageResource(R.drawable.add);
+            holder.imageButton.setLabel(null);
             holder.imageButton.setOnClickListener(v -> {
                 if (mListener != null) mListener.onAdderClick();
             });
         } else {
             Context context = holder.itemView.getContext();
-//            holder.imageButton.setImageResource(R.mipmap.ic_launcher);
-            Glide.with(context).load("https://gandear.perqin.com/img/" + mShishensList.get(position).getId() + "-square.jpg").into(new SimpleTarget<GlideDrawable>() {
-                @Override
-                public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                    holder.imageButton.setImageDrawable(resource);
-                }
-            });
+            holder.imageButton.setLabel(mShishensList.get(position).getName());
+            Glide.with(context).load("https://gandear.perqin.com/img/" + mShishensList.get(position).getId() + "-square.jpg").placeholder(R.drawable.shishen_default_avatar).dontAnimate().into(holder.imageButton);
             holder.imageButton.setOnClickListener(v -> {
                 if (mListener != null) mListener.onGoalClick(mShishensList.get(holder.getAdapterPosition()));
             });
@@ -93,12 +85,12 @@ public class GoalRecyclerAdapter extends RecyclerView.Adapter<GoalRecyclerAdapte
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageButton imageButton;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        LabelCircleImageView imageButton;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
-            imageButton = (ImageButton) itemView.findViewById(R.id.image_button);
+            imageButton = (LabelCircleImageView) itemView.findViewById(R.id.image_button);
         }
     }
 
