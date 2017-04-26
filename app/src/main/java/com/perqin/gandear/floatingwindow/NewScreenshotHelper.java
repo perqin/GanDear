@@ -37,7 +37,7 @@ public class NewScreenshotHelper {
                 }
 
                 Log.d(TAG, "onChange: URI = " + uri.toString());
-                if (uri.toString().matches(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString())) {
+                if (uri.toString().startsWith(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString())) {
                     Cursor cursor = null;
                     try {
                         cursor = mContext.getContentResolver().query(uri, new String[] {
@@ -49,6 +49,7 @@ public class NewScreenshotHelper {
                             String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
                             long dateAdded = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED));
                             long currentTime = System.currentTimeMillis() / 1000;
+                            Log.d(TAG, "onChange: " + path);
                             if (path.toLowerCase().contains("screenshot") && Math.abs(currentTime - dateAdded) <= WAIT_TIME_MILLIS / 1000) {
                                 // screenshot added!
                                 disable();

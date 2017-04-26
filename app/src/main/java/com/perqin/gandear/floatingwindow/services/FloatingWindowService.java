@@ -2,6 +2,8 @@ package com.perqin.gandear.floatingwindow.services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
@@ -10,6 +12,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +30,7 @@ import com.perqin.gandear.floatingwindow.ui.GoalDetailRecyclerAdapter;
 import com.perqin.gandear.floatingwindow.ui.GoalRecyclerAdapter;
 import com.perqin.gandear.floatingwindow.ui.QueryHelper;
 import com.perqin.gandear.floatingwindow.ui.ShishensRecyclerAdapter;
+import com.perqin.gandear.ocr.OcrTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -184,7 +188,16 @@ public class FloatingWindowService extends Service
 
     @Override
     public void onNewScreenshot(String path) {
-        // TODO: Implement onNewScreenshot: Do OCR on this file
+        Bitmap bitmap = BitmapFactory.decodeFile(path);
+        Bitmap[] bitmaps = new Bitmap[3];
+        bitmaps[0] = Bitmap.createBitmap(bitmap, 320, 570, 380, 298);
+        bitmaps[1] = Bitmap.createBitmap(bitmap, 772, 570, 380, 298);
+        bitmaps[2] = Bitmap.createBitmap(bitmap, 1223, 570, 380, 298);
+        new OcrTask(this, strings -> {
+            for (String s : strings) {
+                Log.d(TAG, "onNewScreenshot: " + s);
+            }
+        }).execute(bitmaps);
     }
 
     private void setState(int state) {
@@ -199,7 +212,7 @@ public class FloatingWindowService extends Service
                 mTableLayout.setVisibility(View.GONE);
                 break;
             case STATE_EXPANDED_INITIAL:
-                mQuickAddButton.setVisibility(View.VISIBLE);
+//                mQuickAddButton.setVisibility(View.VISIBLE);
                 mGoalsRecyclerView.setVisibility(View.VISIBLE);
                 mGoalDetailsRecyclerView.setVisibility(View.GONE);
                 mShishensRecyclerView.setVisibility(View.GONE);
@@ -207,7 +220,7 @@ public class FloatingWindowService extends Service
                 mTableLayout.setVisibility(View.GONE);
                 break;
             case STATE_EXPANDED_SELECTING_SHISHEN:
-                mQuickAddButton.setVisibility(View.VISIBLE);
+//                mQuickAddButton.setVisibility(View.VISIBLE);
                 mGoalsRecyclerView.setVisibility(View.VISIBLE);
                 mGoalDetailsRecyclerView.setVisibility(View.GONE);
                 mShishensRecyclerView.setVisibility(View.VISIBLE);
@@ -215,7 +228,7 @@ public class FloatingWindowService extends Service
                 mTableLayout.setVisibility(View.VISIBLE);
                 break;
             case STATE_EXPANDED_SHISHEN_PRESENCE:
-                mQuickAddButton.setVisibility(View.VISIBLE);
+//                mQuickAddButton.setVisibility(View.VISIBLE);
                 mGoalsRecyclerView.setVisibility(View.VISIBLE);
                 mGoalDetailsRecyclerView.setVisibility(View.VISIBLE);
                 mShishensRecyclerView.setVisibility(View.GONE);
@@ -301,7 +314,7 @@ public class FloatingWindowService extends Service
     }
 
     private void startDetecting() {
-        setState(STATE_CLOSED);
+        toggleClosedAndExpanded(false);
         mNewScreenshotHelper.enable();
     }
 
