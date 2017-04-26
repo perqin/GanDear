@@ -1,11 +1,16 @@
 package com.perqin.gandear.floatingwindow.ui;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.perqin.gandear.R;
 import com.perqin.gandear.data.models.Shishen;
 
@@ -52,7 +57,14 @@ public class GoalRecyclerAdapter extends RecyclerView.Adapter<GoalRecyclerAdapte
                 if (mListener != null) mListener.onAdderClick();
             });
         } else {
-            holder.imageButton.setImageResource(R.mipmap.ic_launcher);
+            Context context = holder.itemView.getContext();
+//            holder.imageButton.setImageResource(R.mipmap.ic_launcher);
+            Glide.with(context).load("https://gandear.perqin.com/img/" + mShishensList.get(position).getId() + "-square.jpg").into(new SimpleTarget<GlideDrawable>() {
+                @Override
+                public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                    holder.imageButton.setImageDrawable(resource);
+                }
+            });
             holder.imageButton.setOnClickListener(v -> {
                 if (mListener != null) mListener.onGoalClick(mShishensList.get(holder.getAdapterPosition()));
             });

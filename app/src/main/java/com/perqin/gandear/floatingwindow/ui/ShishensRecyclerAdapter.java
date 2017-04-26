@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.perqin.gandear.R;
 import com.perqin.gandear.data.models.Shishen;
 
@@ -43,6 +44,7 @@ public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecycl
         Shishen shishen = mDataSet.get(position);
         holder.nameText.setText(shishen.getName());
         holder.cluesText.setText(shishen.getClues());
+        Glide.with(holder.itemView.getContext()).load("https://gandear.perqin.com/img/" + mDataSet.get(position).getId() + "-square.jpg").into(holder.avatarImage);
         holder.itemView.setOnClickListener(v -> {
             if (mListener != null) {
                 mListener.onShishenItemClick(shishen);
@@ -62,7 +64,7 @@ public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecycl
 
         public ViewHolder(View itemView) {
             super(itemView);
-            avatarImage = (ImageView) itemView.findViewById(R.id.image_button);
+            avatarImage = (ImageView) itemView.findViewById(R.id.avatar_image);
             nameText = (TextView) itemView.findViewById(R.id.name_text);
             cluesText = (TextView) itemView.findViewById(R.id.clues_text);
         }

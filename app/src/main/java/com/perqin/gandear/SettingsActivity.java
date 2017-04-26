@@ -1,18 +1,25 @@
 package com.perqin.gandear;
 
+import android.Manifest;
+import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.perqin.gandear.floatingwindow.FloatingWindowServiceHelper;
+import com.perqin.gandear.floatingwindow.ScreenshotQuickAddEnabledHelper;
 import com.perqin.gandear.topactivity.TopActivityServiceHelper;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -24,14 +31,25 @@ public class SettingsActivity extends AppCompatActivity {
                 .replace(android.R.id.content, new SettingsFragment()).commit();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Fragment fragment = getFragmentManager().findFragmentById(android.R.id.content);
+        if (fragment != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
     public static class SettingsFragment extends PreferenceFragment {
         private static final int REQUEST_MANAGE_OVERLAY_PERMISSION = 6565;
+        private static final int REQUEST_READ_EXTERNAL_STORAGE = 10;
 
         private boolean mDrawOverAppsRequestFlag;
         private boolean mAccessibilityRequestFlag;
         private boolean mToggleOnRequestFlag;
 
         private SwitchPreference mServiceEnabledPreference;
+        private SwitchPreference mScreenshotQuickAddEnabledPreference;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +79,22 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 return true;
             });
+            mScreenshotQuickAddEnabledPreference = (SwitchPreference)
+                    preferenceScreen.findPreference(getString(R.string.pk_screenshot_quick_add_enabled));
+            mScreenshotQuickAddEnabledPreference.setOnPreferenceChangeListener(((preference, newValue) -> {
+                boolean checked = (boolean) newValue;
+                if (checked) {
+                    if (ScreenshotQuickAddEnabledHelper.canEnable(getActivity())) {
+                        return true;
+                    } else {
+                        // Request permission
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_READ_EXTERNAL_STORAGE);
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            }));
         }
 
         @Override
@@ -77,6 +111,18 @@ public class SettingsActivity extends AppCompatActivity {
                 if (!FloatingWindowServiceHelper.canStartService(getActivity())) {
                     // The user refuses to grant permission! Reset all flags and don't even try starting service!
                     resetAllRequestFlags();
+                }
+            }
+        }
+
+        @Override
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (requestCode == REQUEST_READ_EXTERNAL_STORAGE) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mScreenshotQuickAddEnabledPreference.setChecked(true);
+                } else {
+                    Toast.makeText(getActivity(), R.string.read_external_storage_permission_is_required_to_read_your_screenshot, Toast.LENGTH_SHORT).show();
                 }
             }
         }

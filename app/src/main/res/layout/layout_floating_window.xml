@@ -16,15 +16,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <ImageButton
+        android:id="@+id/quick_add_button"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@drawable/ic_expand"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/toggle_button"
+        android:visibility="gone" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/goals_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintTop_toTopOf="@+id/toggle_button"
-        app:layout_constraintStart_toEndOf="@+id/toggle_button"
+        app:layout_constraintTop_toTopOf="@id/toggle_button"
+        app:layout_constraintStart_toEndOf="@id/quick_add_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/toggle_button"
+        app:layout_constraintBottom_toBottomOf="@id/toggle_button"
         tools:ignore="RtlHardcoded" />
 
     <android.support.v7.widget.RecyclerView

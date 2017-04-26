@@ -3,7 +3,9 @@ package com.perqin.gandear.floatingwindow.services;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 import com.perqin.gandear.R;
 import com.perqin.gandear.data.AppRepository;
 import com.perqin.gandear.data.models.Shishen;
+import com.perqin.gandear.floatingwindow.NewScreenshotHelper;
 import com.perqin.gandear.floatingwindow.ui.GoalDetailRecyclerAdapter;
 import com.perqin.gandear.floatingwindow.ui.GoalRecyclerAdapter;
 import com.perqin.gandear.floatingwindow.ui.QueryHelper;
@@ -30,7 +33,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class FloatingWindowService extends Service
-        implements GoalRecyclerAdapter.OnGoalClickListener, ShishensRecyclerAdapter.OnItemClickListener, View.OnClickListener, QueryHelper.QueryChangeListener {
+        implements GoalRecyclerAdapter.OnGoalClickListener, ShishensRecyclerAdapter.OnItemClickListener, View.OnClickListener, QueryHelper.QueryChangeListener, NewScreenshotHelper.OnNewScreenshotListener {
     private static final String TAG = "FloatingWindowService";
     private static final int STATE_CLOSED = 0;
     private static final int STATE_EXPANDED_INITIAL = 1;
@@ -47,6 +50,8 @@ public class FloatingWindowService extends Service
 
     private View mFloatingWindowView;
     private ImageButton mToggleButton;
+    @BindView(R.id.quick_add_button)
+    ImageButton mQuickAddButton;
     private RecyclerView mGoalsRecyclerView;
     private RecyclerView mGoalDetailsRecyclerView;
     private RecyclerView mShishensRecyclerView;
@@ -56,6 +61,7 @@ public class FloatingWindowService extends Service
     TextView mInputText;
     @BindView(R.id.window_root_layout)
     ConstraintLayout mRootLayout;
+    private NewScreenshotHelper mNewScreenshotHelper;
 
     public FloatingWindowService() {
     }
@@ -71,6 +77,7 @@ public class FloatingWindowService extends Service
         mToggleOpened = false;
         mQueryHelper = new QueryHelper();
         mQueryHelper.setListener(this);
+        mNewScreenshotHelper = new NewScreenshotHelper(this, new Handler(Looper.getMainLooper()), this);
         addFloatingWindowView();
     }
 
@@ -78,6 +85,7 @@ public class FloatingWindowService extends Service
     public void onDestroy() {
         super.onDestroy();
         removeFloatingWindowView();
+        mNewScreenshotHelper.onDestroy();
     }
 
     @Override
@@ -108,10 +116,82 @@ public class FloatingWindowService extends Service
         }
     }
 
+    @Override
+    public void onShishenItemClick(Shishen shishen) {
+        boolean added = mGoalRecyclerAdapter.addShishen(shishen);
+        if (!added) {
+            Toast.makeText(this, R.string.this_shishen_is_already_added, Toast.LENGTH_SHORT).show();
+        } else {
+            AppRepository.getInstance(this).addGoalShishen(shishen);
+            mQueryHelper.clearQuery();
+            setState(STATE_EXPANDED_INITIAL);
+        }
+    }
+
+    @OnClick({ R.id.delete_button, R.id.abc_button, R.id.def_button,
+            R.id.ghi_button, R.id.jkl_button, R.id.mno_button,
+            R.id.pqrs_button, R.id.tuv_button, R.id.wxyz_button, R.id.quick_add_button })
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.delete_button:
+                String q = mQueryHelper.getQuery();
+                if (!q.isEmpty()) {
+                    mQueryHelper.setQuery(q.substring(0, q.length() - 1));
+                }
+                break;
+            case R.id.abc_button:
+                mQueryHelper.appendToQuery("2");
+                break;
+            case R.id.def_button:
+                mQueryHelper.appendToQuery("3");
+                break;
+            case R.id.ghi_button:
+                mQueryHelper.appendToQuery("4");
+                break;
+            case R.id.jkl_button:
+                mQueryHelper.appendToQuery("5");
+                break;
+            case R.id.mno_button:
+                mQueryHelper.appendToQuery("6");
+                break;
+            case R.id.pqrs_button:
+                mQueryHelper.appendToQuery("7");
+                break;
+            case R.id.tuv_button:
+                mQueryHelper.appendToQuery("8");
+                break;
+            case R.id.wxyz_button:
+                mQueryHelper.appendToQuery("9");
+                break;
+            case R.id.quick_add_button:
+                startDetecting();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onQueryChange(String oldQuery, String newQuery) {
+        mInputText.setText(newQuery);
+        if (newQuery.isEmpty()) {
+            mShishensRecyclerAdapter.refreshShishens(AppRepository.getInstance(this).getShishens());
+        } else {
+            mShishensRecyclerAdapter.refreshShishens(AppRepository.getInstance(this).queryShishens(newQuery));
+        }
+    }
+
+    @Override
+    public void onNewScreenshot(String path) {
+        // TODO: Implement onNewScreenshot: Do OCR on this file
+    }
+
     private void setState(int state) {
         mState = state;
         switch (mState) {
             case STATE_CLOSED:
+                mQuickAddButton.setVisibility(View.GONE);
                 mGoalsRecyclerView.setVisibility(View.GONE);
                 mGoalDetailsRecyclerView.setVisibility(View.GONE);
                 mShishensRecyclerView.setVisibility(View.GONE);
@@ -119,6 +199,7 @@ public class FloatingWindowService extends Service
                 mTableLayout.setVisibility(View.GONE);
                 break;
             case STATE_EXPANDED_INITIAL:
+                mQuickAddButton.setVisibility(View.VISIBLE);
                 mGoalsRecyclerView.setVisibility(View.VISIBLE);
                 mGoalDetailsRecyclerView.setVisibility(View.GONE);
                 mShishensRecyclerView.setVisibility(View.GONE);
@@ -126,6 +207,7 @@ public class FloatingWindowService extends Service
                 mTableLayout.setVisibility(View.GONE);
                 break;
             case STATE_EXPANDED_SELECTING_SHISHEN:
+                mQuickAddButton.setVisibility(View.VISIBLE);
                 mGoalsRecyclerView.setVisibility(View.VISIBLE);
                 mGoalDetailsRecyclerView.setVisibility(View.GONE);
                 mShishensRecyclerView.setVisibility(View.VISIBLE);
@@ -133,6 +215,7 @@ public class FloatingWindowService extends Service
                 mTableLayout.setVisibility(View.VISIBLE);
                 break;
             case STATE_EXPANDED_SHISHEN_PRESENCE:
+                mQuickAddButton.setVisibility(View.VISIBLE);
                 mGoalsRecyclerView.setVisibility(View.VISIBLE);
                 mGoalDetailsRecyclerView.setVisibility(View.VISIBLE);
                 mShishensRecyclerView.setVisibility(View.GONE);
@@ -217,65 +300,9 @@ public class FloatingWindowService extends Service
         mWindowManager.updateViewLayout(mFloatingWindowView, lp);
     }
 
-    @Override
-    public void onShishenItemClick(Shishen shishen) {
-        boolean added = mGoalRecyclerAdapter.addShishen(shishen);
-        if (!added) {
-            Toast.makeText(this, R.string.this_shishen_is_already_added, Toast.LENGTH_SHORT).show();
-        } else {
-            AppRepository.getInstance(this).addGoalShishen(shishen);
-            mQueryHelper.clearQuery();
-            setState(STATE_EXPANDED_INITIAL);
-        }
-    }
-
-    @OnClick({ R.id.delete_button, R.id.abc_button, R.id.def_button, R.id.ghi_button, R.id.jkl_button, R.id.mno_button, R.id.pqrs_button, R.id.tuv_button, R.id.wxyz_button })
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.delete_button:
-                String q = mQueryHelper.getQuery();
-                if (!q.isEmpty()) {
-                    mQueryHelper.setQuery(q.substring(0, q.length() - 1));
-                }
-                break;
-            case R.id.abc_button:
-                mQueryHelper.appendToQuery("2");
-                break;
-            case R.id.def_button:
-                mQueryHelper.appendToQuery("3");
-                break;
-            case R.id.ghi_button:
-                mQueryHelper.appendToQuery("4");
-                break;
-            case R.id.jkl_button:
-                mQueryHelper.appendToQuery("5");
-                break;
-            case R.id.mno_button:
-                mQueryHelper.appendToQuery("6");
-                break;
-            case R.id.pqrs_button:
-                mQueryHelper.appendToQuery("7");
-                break;
-            case R.id.tuv_button:
-                mQueryHelper.appendToQuery("8");
-                break;
-            case R.id.wxyz_button:
-                mQueryHelper.appendToQuery("9");
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onQueryChange(String oldQuery, String newQuery) {
-        mInputText.setText(newQuery);
-        if (newQuery.isEmpty()) {
-            mShishensRecyclerAdapter.refreshShishens(AppRepository.getInstance(this).getShishens());
-        } else {
-            mShishensRecyclerAdapter.refreshShishens(AppRepository.getInstance(this).queryShishens(newQuery));
-        }
+    private void startDetecting() {
+        setState(STATE_CLOSED);
+        mNewScreenshotHelper.enable();
     }
 
     private class OnToggleButtonClickListener implements View.OnClickListener {

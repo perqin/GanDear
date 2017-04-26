@@ -8,4 +8,10 @@
         android:summary="@string/enable_floating_window_in_game"
         android:persistent="false"/>
 
+    <SwitchPreference
+        android:id="@+id/screenshot_quick_add_preference"
+        android:key="@string/pk_screenshot_quick_add_enabled"
+        android:title="@string/enable_quick_add_from_screenshot"
+        android:summary="@string/enable_quick_add_from_detecting_screenshot_content_require_permission" />
+
 </PreferenceScreen>

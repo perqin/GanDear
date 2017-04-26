@@ -14,6 +14,8 @@ import com.perqin.gandear.floatingwindow.services.FloatingWindowService;
  */
 
 public class FloatingWindowServiceHelper {
+    private static boolean sStopDisabledFlag = false;
+
     public static boolean canStartService(Context context) {
         // "Draw over other apps" has to be enable manually by user on Android M
         // if the app is not installed from Google Play Store.
@@ -29,6 +31,11 @@ public class FloatingWindowServiceHelper {
     }
 
     public static void stopService(Context context) {
+        if (sStopDisabledFlag) return;
         context.stopService(new Intent(context, FloatingWindowService.class));
+    }
+
+    public static void setStopDisabledFlag(boolean stopDisabledFlag) {
+        sStopDisabledFlag = stopDisabledFlag;
     }
 }
