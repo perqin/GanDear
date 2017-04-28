@@ -1,5 +1,6 @@
 package com.perqin.gandear.floatingwindow.services;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import com.perqin.gandear.R;
 import com.perqin.gandear.data.AppRepository;
 import com.perqin.gandear.data.models.Shishen;
 import com.perqin.gandear.floatingwindow.NewScreenshotHelper;
+import com.perqin.gandear.floatingwindow.ui.DraggableToggleImageButton;
 import com.perqin.gandear.floatingwindow.ui.GoalDetailRecyclerAdapter;
 import com.perqin.gandear.floatingwindow.ui.GoalRecyclerAdapter;
 import com.perqin.gandear.floatingwindow.ui.QueryHelper;
@@ -53,7 +55,7 @@ public class FloatingWindowService extends Service
     private QueryHelper mQueryHelper;
 
     private View mFloatingWindowView;
-    private ImageButton mToggleButton;
+    private DraggableToggleImageButton mToggleButton;
     @BindView(R.id.quick_add_button)
     ImageButton mQuickAddButton;
     private RecyclerView mGoalsRecyclerView;
@@ -239,10 +241,30 @@ public class FloatingWindowService extends Service
         }
     }
 
+    @SuppressLint("RtlHardcoded")
     private void addFloatingWindowView() {
         mFloatingWindowView = LayoutInflater.from(this).inflate(R.layout.layout_floating_window, null, false);
-        mToggleButton = (ImageButton) mFloatingWindowView.findViewById(R.id.toggle_button);
+        mToggleButton = (DraggableToggleImageButton) mFloatingWindowView.findViewById(R.id.toggle_button);
         mToggleButton.setOnClickListener(new OnToggleButtonClickListener());
+        mToggleButton.setOnDraggableButtonTouchEventListener(new DraggableToggleImageButton.OnDraggableToggleButtonTouchEvent() {
+            @Override
+            public void onDrag(float dx, float dy) {
+                if (mState == STATE_CLOSED) {
+                    WindowManager.LayoutParams lp = (WindowManager.LayoutParams) mFloatingWindowView.getLayoutParams();
+                    lp.x += dx;
+                    lp.y += dy;
+                    mWindowManager.updateViewLayout(mFloatingWindowView, lp);
+                }
+            }
+
+            @Override
+            public void onRelease() {
+                if (mState == STATE_CLOSED) {
+                    WindowManager.LayoutParams lp = (WindowManager.LayoutParams) mFloatingWindowView.getLayoutParams();
+                    AppRepository.getInstance(FloatingWindowService.this).saveFloatingWindowPosition(lp.x, lp.y);
+                }
+            }
+        });
         mGoalsRecyclerView = (RecyclerView) mFloatingWindowView.findViewById(R.id.goals_recycler_view);
         mGoalsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mGoalsRecyclerView.setAdapter(mGoalRecyclerAdapter);
@@ -257,6 +279,8 @@ public class FloatingWindowService extends Service
 
         setState(STATE_CLOSED);
 
+        int[] pos = new int[2];
+        AppRepository.getInstance(this).readFloatingWindowPosition(pos);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -265,8 +289,8 @@ public class FloatingWindowService extends Service
                 PixelFormat.TRANSLUCENT
         );
         lp.gravity = Gravity.TOP | Gravity.LEFT;
-        lp.x = 100;
-        lp.y = 100;
+        lp.x = pos[0];
+        lp.y = pos[1];
         mWindowManager.addView(mFloatingWindowView, lp);
     }
 
@@ -277,6 +301,7 @@ public class FloatingWindowService extends Service
         }
     }
 
+    @SuppressLint("RtlHardcoded")
     private void toggleClosedAndExpanded(boolean expand) {
         mToggleOpened = expand;
         final WindowManager.LayoutParams lp;
@@ -296,6 +321,8 @@ public class FloatingWindowService extends Service
             setState(STATE_EXPANDED_INITIAL);
             mToggleButton.setImageResource(R.drawable.ic_close);
         } else {
+            int[] pos = new int[2];
+            AppRepository.getInstance(this).readFloatingWindowPosition(pos);
             padding = 0;
             lp = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT,
@@ -305,8 +332,8 @@ public class FloatingWindowService extends Service
                     PixelFormat.TRANSLUCENT
             );
             lp.gravity = Gravity.TOP | Gravity.LEFT;
-            lp.x = 100;
-            lp.y = 100;
+            lp.x = pos[0];
+            lp.y = pos[1];
             setState(STATE_CLOSED);
             mToggleButton.setImageResource(R.drawable.ic_expand);
         }

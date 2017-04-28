@@ -31,6 +31,9 @@ public class AppRepository {
     private static final String TAG = "AppRepository";
     private static final String PK_GOAL_SHISHENS = "GOAL_SHISHENS";
     private static final String PK_DATA_JSON_VERSION = "DATA_JSON_VERSION";
+    private static final String PK_FLOATING_WINDOW_POS_X = "FLOATING_WINDOW_POS_X";
+    private static final String PK_FLOATING_WINDOW_POS_Y = "FLOATING_WINDOW_POS_Y";
+
     private static AppRepository sInstance;
 
     private SharedPreferences mSharedPreferences;
@@ -191,5 +194,16 @@ public class AppRepository {
                 }
             }
         }
+    }
+
+    public void readFloatingWindowPosition(int[] pos) {
+        pos[0] = mSharedPreferences.getInt(PK_FLOATING_WINDOW_POS_X, 100);
+        pos[1] = mSharedPreferences.getInt(PK_FLOATING_WINDOW_POS_Y, 100);
+    }
+
+    public void saveFloatingWindowPosition(int x, int y) {
+        mSharedPreferences.edit()
+                .putInt(PK_FLOATING_WINDOW_POS_X, x)
+                .putInt(PK_FLOATING_WINDOW_POS_Y, y).apply();
     }
 }
