@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Gan, dear!</string>
+    <string name="app_name">肝帝</string>
     <string name="enable">启用</string>
     <string name="enable_floating_window_in_game">在游戏中启用悬浮窗口</string>
     <string name="you_must_allow_me_to_draw_over_other_apps">你必须允许我在其他应用上层绘制</string>
@@ -10,4 +10,12 @@
     <string name="count_PH">个数：%1$s</string>
     <string name="money_PH">金币：%1$s</string>
     <string name="exp_PH">经验：%1$s</string>
+    <string name="permission_required">d</string>
+    <string name="to_detect_whether_you_are_playing_the_game_on_android_lollipop_and_higher_we_need_accessibility_service_enabled">为了在 Android 5.0 及以上的设备上判断游戏是否在前台运行，我们需要启用无障碍服务。</string>
+    <string name="enable_quick_add_from_screenshot">启用“从屏幕截图中快速添加”</string>
+    <string name="cancel">取消</string>
+    <string name="enable_quick_add_from_detecting_screenshot_content_require_permission">启用“从屏幕截图中快速添加”需要权限</string>
+    <string name="to_show_floating_window_when_you_are_playing_the_game_on_android_lower_than_kitkat_we_need_draw_over_apps_permission_granted">要在游戏在前台运行时显示悬浮窗，你需要授予应用“在其他应用上层绘制”的权限。</string>
+    <string name="we_need_necessary_permissions_to_work_properly">本应用需要必要的权限才能正常运行</string>
+    <string name="read_external_storage_permission_is_required_to_read_your_screenshot">要读取截图，我们需要“READ_EXTERNAL_STORAGE”权限。</string>
 </resources>
