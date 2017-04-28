@@ -5,7 +5,7 @@
     android:layout_height="192dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:background="@color/colorWhite">
+    android:background="#B9A9A0">
 
     <TextView
         android:id="@+id/name_text"
@@ -44,7 +44,6 @@
         android:id="@+id/money_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -55,7 +54,6 @@
         android:id="@+id/exp_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/money_text"
         app:layout_constraintStart_toStartOf="parent"

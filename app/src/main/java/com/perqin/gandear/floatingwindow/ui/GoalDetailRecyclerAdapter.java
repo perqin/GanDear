@@ -32,8 +32,8 @@ public class GoalDetailRecyclerAdapter extends RecyclerView.Adapter<GoalDetailRe
         Dungeon dungeon = mDataSet.get(position);
         holder.nameText.setText(dungeon.getName());
         holder.sushiText.setText(context.getString(R.string.sushi_PH, String.valueOf(dungeon.getSushi())));
-        holder.moneyText.setText(context.getString(R.string.money_PH, String.valueOf(dungeon.getMoney())));
-        holder.expText.setText(context.getString(R.string.exp_PH, String.valueOf(dungeon.getExp())));
+//        holder.moneyText.setText(context.getString(R.string.money_PH, String.valueOf(dungeon.getMoney())));
+//        holder.expText.setText(context.getString(R.string.exp_PH, String.valueOf(dungeon.getExp())));
         int count = 0;
         for (Dungeon.Round round : dungeon.getRounds()) {
             if (round.getEnemies().containsKey(mShishenId)) {

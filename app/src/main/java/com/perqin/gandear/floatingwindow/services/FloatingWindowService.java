@@ -5,11 +5,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -338,6 +340,7 @@ public class FloatingWindowService extends Service
             mToggleButton.setImageResource(R.drawable.ic_expand);
         }
         mRootLayout.setPadding(padding, padding, padding, padding);
+        mRootLayout.setBackgroundColor(mToggleOpened ? ContextCompat.getColor(this, R.color.colorWindowBackground) : Color.TRANSPARENT);
         mWindowManager.updateViewLayout(mFloatingWindowView, lp);
     }
 

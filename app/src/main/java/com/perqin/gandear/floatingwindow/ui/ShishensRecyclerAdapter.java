@@ -57,12 +57,12 @@ public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecycl
         return mDataSet.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView avatarImage;
-        public TextView nameText;
-        public TextView cluesText;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView avatarImage;
+        TextView nameText;
+        TextView cluesText;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             avatarImage = (ImageView) itemView.findViewById(R.id.avatar_image);
             nameText = (TextView) itemView.findViewById(R.id.name_text);
