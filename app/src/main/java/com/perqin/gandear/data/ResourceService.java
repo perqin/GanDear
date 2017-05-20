@@ -1,6 +1,8 @@
 package com.perqin.gandear.data;
 
-import retrofit2.Call;
+import com.perqin.gandear.data.models.Version;
+
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 
 /**
@@ -12,5 +14,8 @@ public interface ResourceService {
     String BASE_URL = "https://gandear.perqin.com/";
 
     @GET("data.json")
-    Call<String> getDataJsonFile();
+    Observable<String> getDataJsonFile();
+
+    @GET("version.json")
+    Observable<Version> getVersionJsonFile();
 }

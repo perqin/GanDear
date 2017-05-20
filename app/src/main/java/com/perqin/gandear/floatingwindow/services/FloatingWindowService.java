@@ -87,7 +87,13 @@ public class FloatingWindowService extends Service
         mQueryHelper.setListener(this);
         mNewScreenshotHelper = new NewScreenshotHelper(this, new Handler(Looper.getMainLooper()), this);
         addFloatingWindowView();
-        AppRepository.getInstance(this).updateDataJsonFile();
+        // Check update of data.json
+        final AppRepository appRepository = AppRepository.getInstance(this);
+        appRepository.checkDataJsonUpdate().subscribe(version -> {
+            if (version != -1) {
+                appRepository.updateLatestDataJson(version);
+            }
+        });
     }
 
     @Override
