@@ -11,7 +11,7 @@ public class Shishen {
     private String id;
     private String name;
     private String imageSrcUrl;
-    private String clues;
+    private List<String> clues;
     private List<String> queries;
 
     public String getName() {
@@ -30,11 +30,11 @@ public class Shishen {
         this.imageSrcUrl = imageSrcUrl;
     }
 
-    public String getClues() {
+    public List<String> getClues() {
         return clues;
     }
 
-    public void setClues(String clues) {
+    public void setClues(List<String> clues) {
         this.clues = clues;
     }
 

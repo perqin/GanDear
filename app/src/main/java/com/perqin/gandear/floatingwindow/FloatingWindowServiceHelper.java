@@ -3,7 +3,7 @@ package com.perqin.gandear.floatingwindow;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.provider.Settings;
+import android.view.WindowManager;
 
 import com.perqin.gandear.common.ServiceUtils;
 import com.perqin.gandear.floatingwindow.services.FloatingWindowService;
@@ -19,7 +19,7 @@ public class FloatingWindowServiceHelper {
     public static boolean canStartService(Context context) {
         // "Draw over other apps" has to be enable manually by user on Android M
         // if the app is not installed from Google Play Store.
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context);
+        return true;
     }
 
     public static boolean isServiceRunning(Context context) {
@@ -37,5 +37,9 @@ public class FloatingWindowServiceHelper {
 
     public static void setStopDisabledFlag(boolean stopDisabledFlag) {
         sStopDisabledFlag = stopDisabledFlag;
+    }
+
+    public static int getFloatingWindowType() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT ? WindowManager.LayoutParams.TYPE_PHONE : WindowManager.LayoutParams.TYPE_TOAST;
     }
 }

@@ -1,6 +1,7 @@
 package com.perqin.gandear.floatingwindow.ui;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.perqin.gandear.R;
 import com.perqin.gandear.data.models.Shishen;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author   : perqin
@@ -19,6 +21,7 @@ import java.util.ArrayList;
  */
 
 public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecyclerAdapter.ViewHolder> {
+    private static final String TAG = "ShishensRecyclerAdapter";
     private ArrayList<Shishen> mDataSet = new ArrayList<>();
     private OnItemClickListener mListener;
 
@@ -43,7 +46,8 @@ public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecycl
     public void onBindViewHolder(ViewHolder holder, int position) {
         Shishen shishen = mDataSet.get(position);
         holder.nameText.setText(shishen.getName());
-        holder.cluesText.setText(shishen.getClues());
+        Log.d(TAG, "onBindViewHolder: Shishen: " + shishen.getName());
+        holder.cluesText.setText(joinClues(shishen.getClues()));
         Glide.with(holder.itemView.getContext()).load("https://gandear.perqin.com/img/" + mDataSet.get(position).getId() + "-square.jpg").into(holder.avatarImage);
         holder.itemView.setOnClickListener(v -> {
             if (mListener != null) {
@@ -55,6 +59,24 @@ public class ShishensRecyclerAdapter extends RecyclerView.Adapter<ShishensRecycl
     @Override
     public int getItemCount() {
         return mDataSet.size();
+    }
+
+    private String joinClues(List<String> clues) {
+        if (clues == null) {
+            Log.w(TAG, "joinClues: Clues is null!");
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (String clue : clues) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(" ");
+            }
+            sb.append(clue);
+        }
+        return sb.toString();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

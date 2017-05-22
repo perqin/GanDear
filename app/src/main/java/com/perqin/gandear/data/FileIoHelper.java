@@ -3,6 +3,7 @@ package com.perqin.gandear.data;
 import android.content.Context;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -77,5 +78,22 @@ public class FileIoHelper {
                 }
             }
         }
+    }
+
+    public static String readStringFromFile(File file) {
+        String json = "";
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            int size = inputStream.available();
+            byte[] buffer = new byte[size];
+            int readCount = inputStream.read(buffer);
+            inputStream.close();
+            if (readCount != -1) {
+                json = new String(buffer, "UTF-8");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 }

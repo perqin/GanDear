@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.perqin.gandear.data.models.Data;
 import com.perqin.gandear.data.models.Dungeon;
 import com.perqin.gandear.data.models.Shishen;
-import com.perqin.gandear.data.models.UpdateAvailability;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,26 +61,12 @@ public class AppRepository {
     public void init(Context context) {
         if (!mSharedPreferences.contains(PK_DATA_JSON_VERSION)) {
             updateLocalDataFile(context);
+        } else {
+            loadLocalDataFile(context);
         }
         if (!mSharedPreferences.contains(PK_TRAINEDDATA_VERSION)) {
             updateLocalTraineddataFile(context);
         }
-    }
-
-    /**
-     * Check update of data.json and chi_sim.traineddata
-     * @return Observable which emits an UpdateAvailability object
-     */
-    public Observable<UpdateAvailability> checkUpdate() {
-        final long oldDataJsonVersion = mSharedPreferences.getLong(PK_DATA_JSON_VERSION, 0);
-        final long oldTraineddataVersion = mSharedPreferences.getLong(PK_TRAINEDDATA_VERSION, 0);
-        return mResourceService.getVersionJsonFile().map(version -> {
-            UpdateAvailability ua = new UpdateAvailability();
-            ua.data = oldDataJsonVersion < version.data;
-            ua.dataVersion = version.data;
-            ua.traineddata = oldTraineddataVersion < version.traineddata;
-            return ua;
-        }).observeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
     }
 
     /**
@@ -92,7 +77,7 @@ public class AppRepository {
         final long oldVersion = mSharedPreferences.getLong(PK_DATA_JSON_VERSION, 0);
         return mResourceService.getVersionJsonFile()
                 .map(version -> oldVersion < version.data ? version.data : -1)
-                .observeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
@@ -103,16 +88,19 @@ public class AppRepository {
         final long oldVersion = mSharedPreferences.getLong(PK_TRAINEDDATA_VERSION, 0);
         return mResourceService.getVersionJsonFile()
                 .map(version -> oldVersion < version.traineddata ? version.traineddata : -1)
-                .observeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
      * Update latest data.json file
      */
-    public void updateLatestDataJson(long newVersion) {
-        mResourceService.getDataJsonFile()
-                .observeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> updateLocalDataFile(s, newVersion));
+    public Observable<Data> updateLatestDataJson(long newVersion) {
+        return mResourceService.getDataJsonFile()
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .map(s -> {
+                    updateLocalDataFile(s, newVersion);
+                    return new Gson().fromJson(s, Data.class);
+                });
     }
 
     /**
@@ -228,14 +216,14 @@ public class AppRepository {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build().create(ResourceService.class);
-        // Initialization are done in init().
-//        // Update local data with built-in asset
-//        String builtInDataJson = FileIoHelper.readStringFromAssets(context,"data.json");
-//        Data builtInData = new Gson().fromJson(builtInDataJson, Data.class);
-//        if (mSharedPreferences.getLong(PK_DATA_JSON_VERSION, 0) < builtInData.version) {
-//            updateLocalDataFile(builtInDataJson, builtInData.version);
-//        }
-//        reloadMemoryCache(builtInData);
+    }
+
+    /**
+     * Load local data.json from file into memory
+     */
+    private void loadLocalDataFile(Context context) {
+        final String json = FileIoHelper.readStringFromFile(new File(context.getFilesDir(), "data.json"));
+        reloadMemoryCache(new Gson().fromJson(json, Data.class));
     }
 
     /**
@@ -254,6 +242,7 @@ public class AppRepository {
      * @param newVersion The version of the data
      */
     private void updateLocalDataFile(String data, long newVersion) {
+        Log.d(TAG, "updateLocalDataFile: JSON=" + data);
         FileIoHelper.saveToFile(data, mDataJsonFile);
         mSharedPreferences.edit().putLong(PK_DATA_JSON_VERSION, newVersion).apply();
         reloadMemoryCache(new Gson().fromJson(data, Data.class));
@@ -264,7 +253,7 @@ public class AppRepository {
      * @param context Context for accessing assets
      */
     private void updateLocalTraineddataFile(Context context) {
-        FileIoHelper.copyFileFromAssets(context, "chi_sim.traineddata", context.getApplicationContext().getDir("tessdata", Context.MODE_PRIVATE));
+        FileIoHelper.copyFileFromAssets(context, "chi_sim.traineddata", new File(context.getApplicationContext().getDir("tessdata", Context.MODE_PRIVATE), "chi_sim.traineddata"));
     }
 
     /**
@@ -311,6 +300,7 @@ public class AppRepository {
             sortDungeons(dungeons, shishen.getId());
             mShishenPresences.put(shishen.getId(), dungeons);
         }
+        Log.d(TAG, "reloadMemoryCache: MemoryCache reloaded");
     }
 
     private void sortDungeons(ArrayList<Dungeon> dungeons, String id) {

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.perqin.gandear.R;
 import com.perqin.gandear.data.AppRepository;
 import com.perqin.gandear.data.models.Shishen;
+import com.perqin.gandear.floatingwindow.FloatingWindowServiceHelper;
 import com.perqin.gandear.floatingwindow.NewScreenshotHelper;
 import com.perqin.gandear.floatingwindow.ui.DraggableToggleImageButton;
 import com.perqin.gandear.floatingwindow.ui.GoalDetailRecyclerAdapter;
@@ -91,8 +92,17 @@ public class FloatingWindowService extends Service
         final AppRepository appRepository = AppRepository.getInstance(this);
         appRepository.checkDataJsonUpdate().subscribe(version -> {
             if (version != -1) {
-                appRepository.updateLatestDataJson(version);
+                appRepository.updateLatestDataJson(version).subscribe(data -> {
+                    mShishensRecyclerAdapter.refreshShishens(data.shishens);
+                    if (mState == STATE_EXPANDED_SHISHEN_PRESENCE) {
+                        setState(STATE_EXPANDED_INITIAL);
+                    }
+                }, throwable -> {
+                    Log.w(TAG, "onCreate: Failed to update", throwable);
+                });
             }
+        }, throwable -> {
+            Log.w(TAG, "onCreate: Failed to get version.json", throwable);
         });
     }
 
@@ -292,7 +302,7 @@ public class FloatingWindowService extends Service
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
+                FloatingWindowServiceHelper.getFloatingWindowType(),
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
         );
@@ -319,7 +329,7 @@ public class FloatingWindowService extends Service
             lp = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.MATCH_PARENT,
-                    WindowManager.LayoutParams.TYPE_PHONE,
+                    FloatingWindowServiceHelper.getFloatingWindowType(),
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT
             );
@@ -335,7 +345,7 @@ public class FloatingWindowService extends Service
             lp = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_PHONE,
+                    FloatingWindowServiceHelper.getFloatingWindowType(),
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT
             );
