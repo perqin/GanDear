@@ -14,4 +14,10 @@
         android:title="@string/enable_quick_add_from_screenshot"
         android:summary="@string/enable_quick_add_from_detecting_screenshot_content_require_permission" />
 
+    <com.perqin.gandear.common.SummaryPreference
+        android:id="@+id/faq_preference"
+        android:key="@string/pk_faq"
+        android:title="@string/faq"
+        android:summary="@string/view_frequently_asked_questions"/>
+
 </PreferenceScreen>

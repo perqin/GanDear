@@ -6,8 +6,8 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!--This permission is only for API 19 or lower-->
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <!-- This permission is only for API 19 or lower -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
         android:name=".App"
@@ -25,6 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".FaqActivity" />
 
         <service
             android:name=".floatingwindow.services.FloatingWindowService"
@@ -41,10 +42,12 @@
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_top_activity" />
         </service>
+
     </application>
 
 </manifest>

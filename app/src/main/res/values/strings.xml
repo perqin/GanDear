@@ -15,10 +15,13 @@
     <string name="cancel">Cancel</string>
     <string name="enable_quick_add_from_screenshot">Enable quick add from screenshot</string>
     <string name="enable_quick_add_from_detecting_screenshot_content_require_permission">Enable quick add from detecting screenshot content. Require permission</string>
+    <string name="faq">FAQ</string>
+    <string name="view_frequently_asked_questions">View frequently asked questions</string>
 
     <!-- Preference keys -->
     <string name="pk_service_enabled" translatable="false">service_enabled</string>
     <string name="pk_screenshot_quick_add_enabled" translatable="false">screenshot_quick_add_enabled</string>
+    <string name="pk_faq" translatable="false">faq</string>
 
     <!-- Actions -->
     <string name="action_android_settings_accessibility_settings" translatable="false">android.settings.ACCESSIBILITY_SETTINGS</string>
@@ -26,4 +29,34 @@
     <string name="we_need_necessary_permissions_to_work_properly">We need necessary permissions to work properly</string>
     <string name="read_external_storage_permission_is_required_to_read_your_screenshot">READ_EXTERNAL_STORAGE permission is required to read your screenshot</string>
     <string name="detected_shishens">Detected shishens:</string>
+    <string name="faq_content"><![CDATA[<h2>How to remove a Shishen?</h2>
+<p>Long press the avatar of the Shishen in the added Shishens list you want to remove.</p>
+<h2>How to use the OCR feature?</h2>
+<p>This feature is newly added in version 1.1.0. Since Android system prevents user installed app from getting screen shot, you have to take a screen shot manually.</p>
+<ul><li>
+Grant <code>READ_EXTERNAL_STORAGE</code> permission to the app.</li>
+<li>
+Go to the game and expand the floating window, then click the Camera button. The floating window will collapse and wait for your screen shot in 10 seconds.</li>
+<li>
+Open the XuanShangFengYin view in the game, and take a screenshot via hardware shortcut. On most Android phone, it is <code>Power/Lock</code>+<code>Volume Down-</code>.</li>
+<li>
+Wait for a second and you will receive a Toast telling that some Shishens are detected.</li>
+</ul>
+<p>Note: The OCR engine is locally stored, so detect a second time will make no help if some Shishen is not detected. Thus, don&#39;t bother try ;-)</p>
+<h2>Sometimes the floating window disappears (on Android L+)</h2>
+<p>This is because on Android Lollipop and higher, an app can get the foreground app info only by receiving AccessibilityService broadcast, and occasionally, the foreground app changes are not broadcast. Just switch to any other app and switch back to the game, and the floating window will show again.</p>
+<h2>Why the app needs so many permissions?</h2>
+<p>Here&#39;s the reason.</p>
+<ul><li>
+<code>SYSTEM_ALERT_WINDOW</code>: This is required on Android lower than 4.4 KitKat and 7.1 Nougat and higher to draw floating window over your game.</li>
+<li>
+<code>INTERNET</code>: This is required to get the latest data. We will never cost you to much data usage.</li>
+<li>
+<code>READ_EXTERNAL_STORAGE</code>: This is required to read screen shot content for OCR.</li>
+<li>
+<code>GET_TASKS</code>: This is required on Android lower than 5.0 Lollipop to get foreground app information.</li>
+</ul>
+<h2>Some data is not incorrect/missing</h2>
+<p>The data is parsed from official site of the game, but due to many reason, errors always occur. If you find any error, please leave comment in the app market or send feedback to me via email <a href="mailto:perqinxie@gmail.com">perqinxie@gmail.com</a>. I will appreciate it if you lend me a hand!</p>
+    ]]></string>
 </resources>

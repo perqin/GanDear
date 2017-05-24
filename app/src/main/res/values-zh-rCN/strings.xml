@@ -11,6 +11,37 @@
     <string name="money_PH">金币：%1$s</string>
     <string name="exp_PH">经验：%1$s</string>
     <string name="permission_required">d</string>
+    <string name="faq_content"><![CDATA[
+    <h2>怎样删除一个式神？</h2>
+<p>在已添加式神列表中长按式神的头像即可移除该式神。</p>
+<h2>怎样使用OCR功能？</h2>
+<p>这个功能是1.1.0版本新增的。由于Android系统限制用户安装的应用截取屏幕，你需要手动截图。</p>
+<ul><li>
+授予本应用<code>READ_EXTERNAL_STORAGE</code>权限。</li>
+<li>
+打开游戏并展开本应用的悬浮窗，然后点击其中的相机按钮。原界面会收回成悬浮窗并等待接下来的10秒用户进行截屏。</li>
+<li>
+打开游戏中的“悬赏封印”面板，然后通过物理组合键截屏。在大多数Android设备上，该快捷键为<code>电源/锁屏</code>+<code>音量减-</code>。</li>
+<li>
+等待大约1秒，然后你会收到一条浮动Toast提醒告诉你哪些式神被添加了。</li>
+</ul>
+<p>注意：OCR引擎是存储在本地的，因此如果某次识别中式神未被识别，那么重新识别一次并不会有什么卵用，所以不用去试了 ;-)</p>
+<h2>有时悬浮窗会消失 (在Android 5.0+)</h2>
+<p>这是因为在Android 5.0及更高版本中，应用只能通过接收无障碍服务广播的方式获得前台应用的信息。而有的时候前台应用的信息变化不会被广播。只要切换到游戏外再重新切回游戏，悬浮窗就会重新出现。</p>
+<h2>为什么请求了这么多权限？</h2>
+<p>原因如下：</p>
+<ul><li>
+<code>SYSTEM_ALERT_WINDOW</code>: 这是为了在低于Android 4.4 KitKat或Android 7.1 Nougat及以上的设备上能够在游戏界面上层绘制悬浮窗。</li>
+<li>
+<code>INTERNET</code>: 这是为了获得最新数据。应用绝不会恶意浪费流量。</li>
+<li>
+<code>READ_EXTERNAL_STORAGE</code>: 这是为了读取截屏的内容提供给OCR识别。</li>
+<li>
+<code>GET_TASKS</code>: 这是为了在低于Android 5.0 Lollipop的设备上获取前台应用信息。</li>
+</ul>
+<h2>某些数据错误/缺失</h2>
+<p>这些数据来自游戏的官方攻略站，但由于各种各样的原因，总会有错漏。如果你发现了任何错误，请在应用市场下评论或直接通过邮件向我反馈： <a href="mailto:perqinxie@gmail.com">perqinxie@gmail.com</a>。如果你能提供帮助，我将十分感谢！</p>
+    ]]></string>
     <string name="to_detect_whether_you_are_playing_the_game_on_android_lollipop_and_higher_we_need_accessibility_service_enabled">为了在 Android 5.0 及以上的设备上判断游戏是否在前台运行，我们需要启用无障碍服务。</string>
     <string name="enable_quick_add_from_screenshot">启用“从屏幕截图中快速添加”</string>
     <string name="cancel">取消</string>

@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.perqin.gandear.common.SummaryPreference;
 import com.perqin.gandear.floatingwindow.FloatingWindowServiceHelper;
 import com.perqin.gandear.floatingwindow.ScreenshotQuickAddEnabledHelper;
 import com.perqin.gandear.topactivity.TopActivityServiceHelper;
@@ -95,6 +96,11 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             }));
+            SummaryPreference faqPreference = (SummaryPreference) preferenceScreen.findPreference(getString(R.string.pk_faq));
+            faqPreference.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(getActivity(), FaqActivity.class));
+                return true;
+            });
         }
 
         @Override
