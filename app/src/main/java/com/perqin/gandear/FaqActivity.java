@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class FaqActivity extends AppCompatActivity {
@@ -20,5 +21,13 @@ public class FaqActivity extends AppCompatActivity {
         }
 
         ((TextView) findViewById(R.id.textView_faqContent)).setText(Html.fromHtml(getString(R.string.faq_content)));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
