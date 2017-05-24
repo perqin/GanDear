@@ -10,7 +10,7 @@
     <string name="count_PH">个数：%1$s</string>
     <string name="money_PH">金币：%1$s</string>
     <string name="exp_PH">经验：%1$s</string>
-    <string name="permission_required">d</string>
+    <string name="permission_required">需要权限</string>
     <string name="faq_content"><![CDATA[
     <h2>怎样删除一个式神？</h2>
 <p>在已添加式神列表中长按式神的头像即可移除该式神。</p>
@@ -49,4 +49,7 @@
     <string name="to_show_floating_window_when_you_are_playing_the_game_on_android_lower_than_kitkat_we_need_draw_over_apps_permission_granted">要在游戏在前台运行时显示悬浮窗，你需要授予应用“在其他应用上层绘制”的权限。</string>
     <string name="we_need_necessary_permissions_to_work_properly">本应用需要必要的权限才能正常运行</string>
     <string name="read_external_storage_permission_is_required_to_read_your_screenshot">要读取截图，我们需要“READ_EXTERNAL_STORAGE”权限。</string>
+    <string name="faq">常见问题</string>
+    <string name="view_frequently_asked_questions">查看常见问题</string>
+    <string name="detected_shishens">检测到式神：</string>
 </resources>
