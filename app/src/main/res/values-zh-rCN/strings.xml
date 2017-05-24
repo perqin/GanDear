@@ -52,4 +52,5 @@
     <string name="faq">常见问题</string>
     <string name="view_frequently_asked_questions">查看常见问题</string>
     <string name="detected_shishens">检测到式神：</string>
+    <string name="only_1080p_is_supported_currently">目前仅支持1080p设备</string>
 </resources>

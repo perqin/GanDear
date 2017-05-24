@@ -205,6 +205,10 @@ public class FloatingWindowService extends Service
     @Override
     public void onNewScreenshot(String path) {
         Bitmap bitmap = BitmapFactory.decodeFile(path);
+        if (bitmap.getHeight() != 1080 || bitmap.getWidth() != 1920) {
+            Toast.makeText(this, R.string.only_1080p_is_supported_currently, Toast.LENGTH_SHORT).show();
+            return;
+        }
         Bitmap[] bitmaps = new Bitmap[3];
         bitmaps[0] = Bitmap.createBitmap(bitmap, 320, 570, 380, 298);
         bitmaps[1] = Bitmap.createBitmap(bitmap, 772, 570, 380, 298);
@@ -225,6 +229,7 @@ public class FloatingWindowService extends Service
                 sb.append(" ").append(sh.getName());
             }
             Toast.makeText(FloatingWindowService.this, sb.toString(), Toast.LENGTH_SHORT).show();
+            toggleClosedAndExpanded(true);
         }).execute(bitmaps);
     }
 

@@ -19,7 +19,9 @@
         android:id="@+id/quick_add_button"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:src="@drawable/ic_expand"
+        android:src="@drawable/ic_detect"
+        android:scaleType="fitCenter"
+        android:background="@null"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/toggle_button"
         android:visibility="gone" />

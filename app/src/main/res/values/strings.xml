@@ -59,4 +59,5 @@ Wait for a second and you will receive a Toast telling that some Shishens are de
 <h2>Some data is not incorrect/missing</h2>
 <p>The data is parsed from official site of the game, but due to many reason, errors always occur. If you find any error, please leave comment in the app market or send feedback to me via email <a href="mailto:perqinxie@gmail.com">perqinxie@gmail.com</a>. I will appreciate it if you lend me a hand!</p>
     ]]></string>
+    <string name="only_1080p_is_supported_currently">Only 1080p is supported currently</string>
 </resources>
