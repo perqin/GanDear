@@ -3,7 +3,6 @@ package com.perqin.gandear.ocr;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
@@ -24,10 +23,6 @@ public class OcrTask extends AsyncTask<Bitmap, Void, ArrayList<String>> {
 
     public OcrTask(Context context, OnOcrDoneListener listener) {
         File file = new File(context.getFilesDir(), "tesseract");
-        boolean mkdirs = file.mkdirs();
-        if (!mkdirs) {
-            Log.w(TAG, "OcrTask: Failed to mkdirs: " + file.getAbsolutePath());
-        }
         mDataPath = file.getAbsolutePath();
         mListener = listener;
     }
@@ -35,9 +30,8 @@ public class OcrTask extends AsyncTask<Bitmap, Void, ArrayList<String>> {
     @Override
     protected ArrayList<String> doInBackground(Bitmap... bitmaps) {
         ArrayList<String> strings = new ArrayList<>();
-        // TODO: Need trained data!
         TessBaseAPI api = new TessBaseAPI();
-        api.init(mDataPath, "eng");
+        api.init(mDataPath, "chi_sim");
         for (Bitmap bitmap : bitmaps) {
             api.setImage(bitmap);
             api.setRectangle(0, 48, bitmap.getWidth(), 40);

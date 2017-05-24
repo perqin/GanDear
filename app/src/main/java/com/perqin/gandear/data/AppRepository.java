@@ -44,8 +44,12 @@ public class AppRepository {
     private HashMap<String, Shishen> mShishensMap;
     private ArrayList<Dungeon> mDungeons;
     private HashMap<String, ArrayList<Dungeon>> mShishenPresences;
-    private final File mDataJsonFile;
     private final ResourceService mResourceService;
+
+    // File that used
+    private final File mDataJsonFile;
+    private final File mTesseractDirFile;
+    private final File mTraineddataFile;
 
     public static AppRepository getInstance(Context context) {
         if (sInstance == null) {
@@ -209,7 +213,15 @@ public class AppRepository {
 
     private AppRepository(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        mDataJsonFile = new File(context.getFilesDir(), "data.json");
+
+        final File dataDirFile = context.getApplicationContext().getFilesDir();
+        mDataJsonFile = new File(dataDirFile, "data.json");
+        mTesseractDirFile = new File(dataDirFile, "tesseract");
+        if (!new File(mTesseractDirFile, "tessdata").mkdirs()) {
+            Log.w(TAG, "AppRepository: Failed to create directory: " + new File(mTesseractDirFile, "tessdata").getAbsolutePath());
+        }
+        mTraineddataFile = new File(mTesseractDirFile, "tessdata/chi_sim.traineddata");
+
         mResourceService = new Retrofit.Builder()
                 .baseUrl(ResourceService.BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -222,7 +234,7 @@ public class AppRepository {
      * Load local data.json from file into memory
      */
     private void loadLocalDataFile(Context context) {
-        final String json = FileIoHelper.readStringFromFile(new File(context.getFilesDir(), "data.json"));
+        final String json = FileIoHelper.readStringFromFile(mDataJsonFile);
         reloadMemoryCache(new Gson().fromJson(json, Data.class));
     }
 
@@ -242,7 +254,6 @@ public class AppRepository {
      * @param newVersion The version of the data
      */
     private void updateLocalDataFile(String data, long newVersion) {
-        Log.d(TAG, "updateLocalDataFile: JSON=" + data);
         FileIoHelper.saveToFile(data, mDataJsonFile);
         mSharedPreferences.edit().putLong(PK_DATA_JSON_VERSION, newVersion).apply();
         reloadMemoryCache(new Gson().fromJson(data, Data.class));
@@ -253,7 +264,10 @@ public class AppRepository {
      * @param context Context for accessing assets
      */
     private void updateLocalTraineddataFile(Context context) {
-        FileIoHelper.copyFileFromAssets(context, "chi_sim.traineddata", new File(context.getApplicationContext().getDir("tessdata", Context.MODE_PRIVATE), "chi_sim.traineddata"));
+        Log.d(TAG, "updateLocalTraineddataFile: " + mTraineddataFile.getAbsolutePath());
+        FileIoHelper.copyFileFromAssets(context, "chi_sim.traineddata", mTraineddataFile);
+        // Since no data is here, we use a fix version
+        mSharedPreferences.edit().putLong(PK_TRAINEDDATA_VERSION, 1495619382454L).apply();
     }
 
     /**
@@ -263,12 +277,11 @@ public class AppRepository {
      * @param newVersion The version of the data file
      */
     private void updateLocalTraineddataFile(Context context, File newFile, long newVersion) {
-        File file = new File(context.getApplicationContext().getDir("tessdata", Context.MODE_PRIVATE), "chi_sim.traineddata");
-        if (!file.delete()) {
+        if (!mTraineddataFile.delete()) {
             Log.w(TAG, "updateLocalTraineddataFile: Failed to remove old chi_sim.traineddata");
             return;
         }
-        if (!newFile.renameTo(file)) {
+        if (!newFile.renameTo(mTraineddataFile)) {
             Log.w(TAG, "updateLocalTraineddataFile: Failed to rename new file to chi_sim.traineddata");
             return;
         }

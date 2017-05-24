@@ -37,6 +37,8 @@ import com.perqin.gandear.floatingwindow.ui.QueryHelper;
 import com.perqin.gandear.floatingwindow.ui.ShishensRecyclerAdapter;
 import com.perqin.gandear.ocr.OcrTask;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -143,14 +145,7 @@ public class FloatingWindowService extends Service
 
     @Override
     public void onShishenItemClick(Shishen shishen) {
-        boolean added = mGoalRecyclerAdapter.addShishen(shishen);
-        if (!added) {
-            Toast.makeText(this, R.string.this_shishen_is_already_added, Toast.LENGTH_SHORT).show();
-        } else {
-            AppRepository.getInstance(this).addGoalShishen(shishen);
-            mQueryHelper.clearQuery();
-            setState(STATE_EXPANDED_INITIAL);
-        }
+        addShishen(shishen);
     }
 
     @OnClick({ R.id.delete_button, R.id.abc_button, R.id.def_button,
@@ -215,9 +210,21 @@ public class FloatingWindowService extends Service
         bitmaps[1] = Bitmap.createBitmap(bitmap, 772, 570, 380, 298);
         bitmaps[2] = Bitmap.createBitmap(bitmap, 1223, 570, 380, 298);
         new OcrTask(this, strings -> {
+            final ArrayList<Shishen> shishens = AppRepository.getInstance(FloatingWindowService.this).getShishens();
+            ArrayList<Shishen> toAdd = new ArrayList<>();
             for (String s : strings) {
-                Log.d(TAG, "onNewScreenshot: " + s);
+                for (Shishen sh : shishens) {
+                    if (s.contains(sh.getName())) {
+                        toAdd.add(sh);
+                    }
+                }
             }
+            StringBuilder sb = new StringBuilder(getString(R.string.detected_shishens));
+            for (Shishen sh : toAdd) {
+                addShishen(sh);
+                sb.append(" ").append(sh.getName());
+            }
+            Toast.makeText(FloatingWindowService.this, sb.toString(), Toast.LENGTH_SHORT).show();
         }).execute(bitmaps);
     }
 
@@ -233,7 +240,7 @@ public class FloatingWindowService extends Service
                 mTableLayout.setVisibility(View.GONE);
                 break;
             case STATE_EXPANDED_INITIAL:
-//                mQuickAddButton.setVisibility(View.VISIBLE);
+                mQuickAddButton.setVisibility(View.VISIBLE);
                 mGoalsRecyclerView.setVisibility(View.VISIBLE);
                 mGoalDetailsRecyclerView.setVisibility(View.GONE);
                 mShishensRecyclerView.setVisibility(View.GONE);
@@ -241,7 +248,7 @@ public class FloatingWindowService extends Service
                 mTableLayout.setVisibility(View.GONE);
                 break;
             case STATE_EXPANDED_SELECTING_SHISHEN:
-//                mQuickAddButton.setVisibility(View.VISIBLE);
+                mQuickAddButton.setVisibility(View.VISIBLE);
                 mGoalsRecyclerView.setVisibility(View.VISIBLE);
                 mGoalDetailsRecyclerView.setVisibility(View.GONE);
                 mShishensRecyclerView.setVisibility(View.VISIBLE);
@@ -249,13 +256,24 @@ public class FloatingWindowService extends Service
                 mTableLayout.setVisibility(View.VISIBLE);
                 break;
             case STATE_EXPANDED_SHISHEN_PRESENCE:
-//                mQuickAddButton.setVisibility(View.VISIBLE);
+                mQuickAddButton.setVisibility(View.VISIBLE);
                 mGoalsRecyclerView.setVisibility(View.VISIBLE);
                 mGoalDetailsRecyclerView.setVisibility(View.VISIBLE);
                 mShishensRecyclerView.setVisibility(View.GONE);
                 mInputText.setVisibility(View.GONE);
                 mTableLayout.setVisibility(View.GONE);
             default: break;
+        }
+    }
+
+    private void addShishen(Shishen shishen) {
+        boolean added = mGoalRecyclerAdapter.addShishen(shishen);
+        if (!added) {
+            Toast.makeText(this, R.string.this_shishen_is_already_added, Toast.LENGTH_SHORT).show();
+        } else {
+            AppRepository.getInstance(this).addGoalShishen(shishen);
+            mQueryHelper.clearQuery();
+            setState(STATE_EXPANDED_INITIAL);
         }
     }
 

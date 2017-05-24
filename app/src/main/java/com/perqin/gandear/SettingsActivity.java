@@ -1,5 +1,6 @@
 package com.perqin.gandear;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,11 +13,13 @@ import android.preference.SwitchPreference;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.perqin.gandear.floatingwindow.FloatingWindowServiceHelper;
+import com.perqin.gandear.floatingwindow.ScreenshotQuickAddEnabledHelper;
 import com.perqin.gandear.topactivity.TopActivityServiceHelper;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -76,22 +79,22 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 return true;
             });
-//            mScreenshotQuickAddEnabledPreference = (SwitchPreference)
-//                    preferenceScreen.findPreference(getString(R.string.pk_screenshot_quick_add_enabled));
-//            mScreenshotQuickAddEnabledPreference.setOnPreferenceChangeListener(((preference, newValue) -> {
-//                boolean checked = (boolean) newValue;
-//                if (checked) {
-//                    if (ScreenshotQuickAddEnabledHelper.canEnable(getActivity())) {
-//                        return true;
-//                    } else {
-//                        // Request permission
-//                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_READ_EXTERNAL_STORAGE);
-//                        return false;
-//                    }
-//                } else {
-//                    return true;
-//                }
-//            }));
+            mScreenshotQuickAddEnabledPreference = (SwitchPreference)
+                    preferenceScreen.findPreference(getString(R.string.pk_screenshot_quick_add_enabled));
+            mScreenshotQuickAddEnabledPreference.setOnPreferenceChangeListener(((preference, newValue) -> {
+                boolean checked = (boolean) newValue;
+                if (checked) {
+                    if (ScreenshotQuickAddEnabledHelper.canEnable(getActivity())) {
+                        return true;
+                    } else {
+                        // Request permission
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_READ_EXTERNAL_STORAGE);
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            }));
         }
 
         @Override

@@ -25,4 +25,5 @@
     <string name="to_show_floating_window_when_you_are_playing_the_game_on_android_lower_than_kitkat_we_need_draw_over_apps_permission_granted">To show floating window when you are playing the game on Android lower than Kitkat, we need Draw Over Apps permission granted.</string>
     <string name="we_need_necessary_permissions_to_work_properly">We need necessary permissions to work properly</string>
     <string name="read_external_storage_permission_is_required_to_read_your_screenshot">READ_EXTERNAL_STORAGE permission is required to read your screenshot</string>
+    <string name="detected_shishens">Detected shishens:</string>
 </resources>
